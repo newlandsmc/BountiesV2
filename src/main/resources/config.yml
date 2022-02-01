@@ -1,0 +1,27 @@
+##########################################################################################################################
+##The task's duration specified how long things should tag on
+##bounty-duration-in-sec -> How long should a bounty tag stay when he kills each non-bounty player
+##player-kill-tag-in-sec -> How long should the plugin track whether the player killed the same person again and again
+##for
+tasks-duration:
+  bounty-duration-in-sec: 86400
+  player-kill-tag-in-sec: 3600
+##########################################################################################################################
+##########################################################################################################################
+##Rewards
+##This section defines everything related to rewards.
+##use-fighting-xp -> This section defines whether to use 3rd Party plugins fighting XP (currently Aurelium Skills) or should
+##use the vanilla XP. If the hook-failed it will default to use normal vanilla-XP
+##reward-for-killing-non-bounty -> Reward a player gets when you kill a player who is not a bounty.
+##bounty-rewards -> This defines how the xp matters according to the amount of kills they have
+## For eg: If a bountied player has 3 kills, the player who kills the bounty will get 2000 XP
+##########################################################################################################################
+rewards:
+  use-fighting-xp: true
+  reward-for-killing-non-bounty: 500
+  bounty-rewards:
+    1: 1000
+    2: 1500
+    3: 2000
+    4: 2500
+    5: 3000
