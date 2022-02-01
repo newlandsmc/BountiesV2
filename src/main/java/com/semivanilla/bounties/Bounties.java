@@ -1,5 +1,6 @@
 package com.semivanilla.bounties;
 
+import com.semivanilla.bounties.api.BountiesAPI;
 import com.semivanilla.bounties.config.Configuration;
 import com.semivanilla.bounties.storage.core.DatabaseHandler;
 import com.semivanilla.bounties.utils.UtilityManager;
@@ -11,13 +12,15 @@ public final class Bounties extends JavaPlugin {
     private DatabaseHandler databaseHandler;
     private PluginDataManager dataManager;
 
+    private static BountiesAPI api;
+
     @Override
     public void onEnable() {
         this.utilityManager = new UtilityManager(this);
         this.configuration = new Configuration(this);
         this.databaseHandler = new DatabaseHandler(this);
         this.dataManager = new PluginDataManager(this);
-
+        api = new PluginAPI(this);
 
         if(!configuration.initConfiguration()){
             getLogger().severe("Unable to instantiate configuration. The plugin will be disabled!");
@@ -56,5 +59,9 @@ public final class Bounties extends JavaPlugin {
 
     public PluginDataManager getDataManager() {
         return dataManager;
+    }
+
+    public static BountiesAPI getBountyAPI() {
+        return api;
     }
 }

@@ -3,6 +3,8 @@ package com.semivanilla.bounties;
 import com.semivanilla.bounties.manager.BountyManager;
 import com.semivanilla.bounties.manager.PlayerTrackerManager;
 import com.semivanilla.bounties.model.Bounty;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
@@ -17,6 +19,10 @@ public class PluginDataManager {
         this.plugin = plugin;
         this.bountyManager = new BountyManager(plugin);
         this.playerTrackerManager = new PlayerTrackerManager(plugin);
+    }
+
+    public boolean isPlayerBounty(@NotNull Player player){
+        return bountyManager.isBounty(player.getUniqueId());
     }
 
     public void loadAllBounties(){
