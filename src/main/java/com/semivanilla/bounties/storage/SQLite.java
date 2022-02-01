@@ -14,35 +14,38 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class H2 extends AbstractSQL implements DataStorageImpl {
+public class SQLite extends AbstractSQL implements DataStorageImpl {
 
     private final DatabaseHandler databaseHandler;
 
-    public H2(DatabaseHandler databaseHandler) {
+    public SQLite(DatabaseHandler databaseHandler) {
         this.databaseHandler = databaseHandler;
     }
 
     @Override
     public boolean initStorageConnection() {
-        if(checkForClass("org.h2.Driver")){
-            databaseHandler.getPlugin().getLogger().severe("JDBC Class is not present, This plugin won't be able to connect to HSQLDB.");
+        if(!checkForClass("org.sqlite.JDBC")){
+            databaseHandler.getPlugin().getLogger().severe("JDBC Class is not present, This plugin won't be able to connect to H2.");
             return false;
         }
 
         final File file = new File(databaseHandler.getPlugin().getDataFolder()+File.separator+"data-storage","database.db");
-        return connect("h2",file.getAbsolutePath());
+        if(!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+
+        return connect("sqlite",file.getAbsolutePath());
     }
 
     @Override
     public void prepareDatabaseTables() {
         PreparedStatement ps1 = null,ps2 = null,ps3 = null;
         try {
-            ps1 = sqlConnection.prepareStatement("CREATE TABLE "+BOUNTY_TABLE_NAME+" IF NOT EXISTS (`pl_id` VARCHAR(40) NOT NULL, `kills` INTEGER NOT NULL , `time` INTEGER NOT NULL );");
-            //ps2 = sqlConnection.prepareStatement("CREATE TABLE "+PLAYER_DATA_TABLE_NAME+" IF NOT EXISTS (`pl_id` VARCHAR(40) NOT NULL, `bounty_kills` INTEGER NOT NULL DEFAULT  0);");
-            ps3 = sqlConnection.prepareStatement("CREATE TABLE "+ XP_QUEUE_TABLE_NAME +" IF NOT EXISTS (`pl_id` VARCHAR(40) NOT NULL,`xp` INTEGER NOT NULL, `add` BOOLEAN NOT NULL);");
+            ps1 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+BOUNTY_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `kills` INTEGER NOT NULL , `time` INTEGER NOT NULL );");
+            //ps2 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+PLAYER_DATA_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `bounty_kills` INTEGER NOT NULL DEFAULT  0);");
+            ps3 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+ XP_QUEUE_TABLE_NAME +"  (`pl_id` VARCHAR(40) NOT NULL,`xp` INTEGER NOT NULL, `add` BOOLEAN NOT NULL);");
 
             ps1.execute();
-            ps2.execute();
+            //ps2.execute();
             ps3.execute();
         }catch (Exception e){
             e.printStackTrace();
@@ -82,8 +85,10 @@ public class H2 extends AbstractSQL implements DataStorageImpl {
             return;
 
         try {
-            if(!sqlConnection.isClosed())
+            if(!sqlConnection.isClosed()) {
+                databaseHandler.getPlugin().getDataManager().getAllBounties().forEachRemaining(this::saveBountySync);
                 sqlConnection.close();
+            }
         }catch (Exception ignored){}
     }
 
@@ -194,6 +199,50 @@ public class H2 extends AbstractSQL implements DataStorageImpl {
             e.printStackTrace();
         }
         return bountyList.iterator();
+    }
+
+    @Override
+    public void saveBountyAsync(@NotNull Bounty bounty) {
+        databaseHandler.getPlugin().getServer().getScheduler().runTaskAsynchronously(databaseHandler.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+               try {
+                   PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ?;");
+                   if(ps == null)
+                       return;
+
+                   ps.setLong(1,bounty.getRemainingTime());
+                   ps.setInt(2,bounty.getKilled());
+
+                   ps.executeUpdate();
+                   ps.close();
+               }catch (Exception e){
+                   e.printStackTrace();
+               }
+            }
+        });
+    }
+
+    @Override
+    public void saveBountySync(@NotNull Bounty bounty) {
+        databaseHandler.getPlugin().getServer().getScheduler().runTask(databaseHandler.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ?;");
+                    if(ps == null)
+                        return;
+
+                    ps.setLong(1,bounty.getRemainingTime());
+                    ps.setInt(2,bounty.getKilled());
+
+                    ps.executeUpdate();
+                    ps.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 }

@@ -6,20 +6,19 @@ import com.semivanilla.bounties.utils.UtilityManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Bounties extends JavaPlugin {
-    private final UtilityManager utilityManager;
-    private final Configuration configuration;
-    private final DatabaseHandler databaseHandler;
-    private final PluginDataManager dataManager;
+    private UtilityManager utilityManager;
+    private Configuration configuration;
+    private DatabaseHandler databaseHandler;
+    private PluginDataManager dataManager;
 
-    public Bounties() {
+    @Override
+    public void onEnable() {
         this.utilityManager = new UtilityManager(this);
         this.configuration = new Configuration(this);
         this.databaseHandler = new DatabaseHandler(this);
         this.dataManager = new PluginDataManager(this);
-    }
 
-    @Override
-    public void onEnable() {
+
         if(!configuration.initConfiguration()){
             getLogger().severe("Unable to instantiate configuration. The plugin will be disabled!");
             getServer().getPluginManager().disablePlugin(this);

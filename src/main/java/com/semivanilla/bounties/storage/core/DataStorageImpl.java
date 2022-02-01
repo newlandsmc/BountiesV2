@@ -1,7 +1,8 @@
 package com.semivanilla.bounties.storage.core;
 
 import com.semivanilla.bounties.model.Bounty;
-import com.semivanilla.bounties.storage.H2;
+import com.semivanilla.bounties.storage.SQLite;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -21,7 +22,7 @@ public interface DataStorageImpl {
      * If using something like SQL, you could use this method for preparing/creating tables and all. Can be empty if its
      * something like JSON and all!
      *
-     * see {@link H2#prepareDatabaseTables()} for more
+     * see {@link SQLite#prepareDatabaseTables()} for more
      */
     void prepareDatabaseTables();
 
@@ -36,6 +37,8 @@ public interface DataStorageImpl {
     /**
      * Returns a String of the database used.
      * For eg: MySQL, MongoDB etc
+     *
+     * You should also do data-saving on here. Before closing the connection if it's an SQL
      *
      * This method does not hold any run-time value. It's just to notify the user what is the database mode
      * @return String of what the storage type will be
@@ -76,5 +79,24 @@ public interface DataStorageImpl {
      * @return Iterator of all the bounties
      */
     Iterator<Bounty> getAllCurrentBounties();
+
+    /**
+     * Saves the details of a bounty to the database
+     *
+     * This should do an async task, This method will be called during the run-time and saving them in the main thread
+     * may cause the serious performance issues
+     * @param bounty
+     */
+    void saveBountyAsync(@NotNull Bounty bounty);
+
+    /**
+     * Saves the detail of a bounty to the database
+     *
+     * This will be a synchronized task and will be used on the {@link JavaPlugin#onDisable()} or specifically {@link DataStorageImpl#close()} method. Since onDisable()
+     * method can't register an async task, This method will be only used to save the data to the database
+     * on server shutdown
+     * @param bounty An of all the bounties the server has
+     */
+    void saveBountySync(@NotNull Bounty bounty);
 
 }

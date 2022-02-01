@@ -51,4 +51,8 @@ public class PlayerTrackerManager {
     public Bounties getPlugin() {
         return plugin;
     }
+
+    public PlayerTrackerTask getPlayerTrackerTask() {
+        return playerTrackerTask;
+    }
 }

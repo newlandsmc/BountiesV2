@@ -1,7 +1,7 @@
 package com.semivanilla.bounties.storage.core;
 
 import com.semivanilla.bounties.Bounties;
-import com.semivanilla.bounties.storage.H2;
+import com.semivanilla.bounties.storage.SQLite;
 
 public class DatabaseHandler {
 
@@ -14,7 +14,7 @@ public class DatabaseHandler {
     }
 
     public boolean initDatabaseConnection(){
-        dataStorage = new H2(this);
+        dataStorage = new SQLite(this);
 
         return dataStorage.initStorageConnection();
     }

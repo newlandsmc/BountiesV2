@@ -25,7 +25,7 @@ public class Configuration {
     }
 
     public boolean initConfiguration(){
-        this.plugin.saveConfig();
+        this.plugin.saveDefaultConfig();
         this.configuration = this.plugin.getConfig();
 
         if(configuration == null) return false;

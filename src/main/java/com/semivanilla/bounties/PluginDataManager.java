@@ -2,6 +2,9 @@ package com.semivanilla.bounties;
 
 import com.semivanilla.bounties.manager.BountyManager;
 import com.semivanilla.bounties.manager.PlayerTrackerManager;
+import com.semivanilla.bounties.model.Bounty;
+
+import java.util.Iterator;
 
 
 public class PluginDataManager {
@@ -27,5 +30,13 @@ public class PluginDataManager {
 
     public PlayerTrackerManager getPlayerTrackerManager() {
         return playerTrackerManager;
+    }
+
+    public Iterator<Bounty> getAllBounties(){
+        return bountyManager.getBountiesHashMap().values().iterator();
+    }
+
+    public Iterator<Bounty> getOnlineBounties(){
+        return bountyManager.getBountiesHashMap().values().stream().filter(Bounty::isPlayerOnline).iterator();
     }
 }

@@ -27,7 +27,8 @@ public abstract class AbstractSQL {
             + "%s" // use ssl
             ;
     protected static final String JDBC_LOCAL_URL = "jdbc:" +
-            "%s" + //Type of DB (sqlite, h2, hsqldb)
+            "%s" +//Type of DB (sqlite, h2, hsqldb)
+            ":" +
             "%s" // File path of the database
             ;
 
