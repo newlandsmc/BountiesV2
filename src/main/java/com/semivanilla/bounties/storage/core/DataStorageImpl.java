@@ -1,6 +1,7 @@
 package com.semivanilla.bounties.storage.core;
 
 import com.semivanilla.bounties.model.Bounty;
+import com.semivanilla.bounties.model.BountyQueue;
 import com.semivanilla.bounties.storage.SQLite;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +76,7 @@ public interface DataStorageImpl {
      * I took this method over loading individual bounty loading, is because considering the fact that this is a custom-made
      * plugin for Semi-Vanilla MC and not a public plugin, and the use case of the plugin will be with less than 200
      * players as of now. Even with 1000 player populating them shouldn't cause much of issue. Another primary reason is
-     * if the data is in memory it will be easy to handle data's when situations like Combat-Logging happens
+     * that with the data in memory it will be easy to handle data's when situations like Combat-Logging happens
      * @return Iterator of all the bounties
      */
     Iterator<Bounty> getAllCurrentBounties();
@@ -99,4 +100,26 @@ public interface DataStorageImpl {
      */
     void saveBountySync(@NotNull Bounty bounty);
 
+    /**
+     * Register a new reward queue to the database, if the player combat-logged in situations
+     * @param queue {@link BountyQueue} object.
+     */
+    void registerBountyQueue(@NotNull BountyQueue queue);
+
+    /**
+     * Removes a queue of {@link BountyQueue} from the database
+     * @param uuid UID of the player to be removed
+     */
+    void removeBountyQueue(@NotNull UUID uuid);
+
+    /**
+     * Returns an Iterator for all the available Bounty Queue's in the database
+     * NOTE: The reason this method is not async it because it SHOULD ONLY be called on server startup.
+     * This is used for populating the memory with all active bounty queue.
+     *
+     * This needed to be loaded only once and there shouldn't be a method needed to update/save to the database later.
+     * As once the reward is executed, the plugin will call {@link DataStorageImpl#removeBountyQueue(UUID)}.
+     * @return
+     */
+    Iterator<BountyQueue> getAllBountyQueues();
 }

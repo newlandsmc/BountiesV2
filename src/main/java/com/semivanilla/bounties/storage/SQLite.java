@@ -1,6 +1,8 @@
 package com.semivanilla.bounties.storage;
 
+import com.semivanilla.bounties.enums.QueueAction;
 import com.semivanilla.bounties.model.Bounty;
+import com.semivanilla.bounties.model.BountyQueue;
 import com.semivanilla.bounties.storage.core.AbstractSQL;
 import com.semivanilla.bounties.storage.core.DataStorageImpl;
 import com.semivanilla.bounties.storage.core.DatabaseHandler;
@@ -42,7 +44,7 @@ public class SQLite extends AbstractSQL implements DataStorageImpl {
         try {
             ps1 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+BOUNTY_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `kills` INTEGER NOT NULL , `time` INTEGER NOT NULL );");
             //ps2 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+PLAYER_DATA_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `bounty_kills` INTEGER NOT NULL DEFAULT  0);");
-            ps3 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+ XP_QUEUE_TABLE_NAME +"  (`pl_id` VARCHAR(40) NOT NULL,`xp` INTEGER NOT NULL, `add` BOOLEAN NOT NULL);");
+            ps3 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+ XP_QUEUE_TABLE_NAME +"  (`pl_id` VARCHAR(40) NOT NULL,`xp` INTEGER NOT NULL, `action` VARCHAR(10) NOT NULL);");
 
             ps1.execute();
             //ps2.execute();
@@ -243,6 +245,72 @@ public class SQLite extends AbstractSQL implements DataStorageImpl {
                 }
             }
         });
+    }
+
+    @Override
+    public void registerBountyQueue(@NotNull BountyQueue queue) {
+        databaseHandler.getPlugin().getServer().getScheduler().runTaskAsynchronously(databaseHandler.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final PreparedStatement ps = sqlConnection.prepareStatement("INSERT INTO "+XP_QUEUE_TABLE_NAME+" VALUES (?,?,?);");
+                    if(ps == null)
+                        return;
+
+                    ps.setString(1,queue.getUuid().toString());
+                    ps.setInt(2,queue.getValueToExecute());
+                    ps.setString(3,queue.getAction().name());
+
+                    ps.executeUpdate();
+                    ps.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void removeBountyQueue(@NotNull UUID uuid) {
+        databaseHandler.getPlugin().getServer().getScheduler().runTaskAsynchronously(databaseHandler.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    final PreparedStatement ps = sqlConnection.prepareStatement("DELETE FROM "+XP_QUEUE_TABLE_NAME+" WHERE `pl_id` = ?;");
+                    if(ps == null)
+                        return;
+
+                    ps.setString(1,uuid.toString());
+
+                    ps.executeUpdate();
+                    ps.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public Iterator<BountyQueue> getAllBountyQueues() {
+        final List<BountyQueue> queueList = new ArrayList<>();
+        try {
+            final PreparedStatement ps = sqlConnection.prepareStatement("SELECT * FROM "+XP_QUEUE_TABLE_NAME+";");
+            if(ps != null){
+                final ResultSet set = ps.executeQuery();
+                if(set != null){
+                    while (set.next()){
+                        final BountyQueue bountyQueue = new BountyQueue(UUID.fromString(set.getString("pl_id")), QueueAction.valueOf(set.getString("action")),set.getInt("xp"));
+                        queueList.add(bountyQueue);
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return queueList.iterator();
     }
 
 }
