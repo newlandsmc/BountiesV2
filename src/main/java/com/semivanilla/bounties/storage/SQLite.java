@@ -3,6 +3,7 @@ package com.semivanilla.bounties.storage;
 import com.semivanilla.bounties.enums.QueueAction;
 import com.semivanilla.bounties.model.Bounty;
 import com.semivanilla.bounties.model.BountyQueue;
+import com.semivanilla.bounties.model.PlayerStatistics;
 import com.semivanilla.bounties.storage.core.AbstractSQL;
 import com.semivanilla.bounties.storage.core.DataStorageImpl;
 import com.semivanilla.bounties.storage.core.DatabaseHandler;
@@ -43,11 +44,11 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
         PreparedStatement ps1 = null,ps2 = null,ps3 = null;
         try {
             ps1 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+BOUNTY_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `kills` INTEGER NOT NULL , `time` INTEGER NOT NULL );");
-            //ps2 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+PLAYER_DATA_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `bounty_kills` INTEGER NOT NULL DEFAULT  0);");
+            ps2 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+PLAYER_DATA_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `bounty_kills` INTEGER NOT NULL DEFAULT  0,`total_kills` INTEGER NOT NULL DEFAULT  0,`deaths` INTEGER NOT NULL DEFAULT  0);");
             ps3 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+ XP_QUEUE_TABLE_NAME +"  (`pl_id` VARCHAR(40) NOT NULL,`xp` INTEGER NOT NULL, `action` VARCHAR(10) NOT NULL);");
 
             ps1.execute();
-            //ps2.execute();
+            ps2.execute();
             ps3.execute();
         }catch (Exception e){
             e.printStackTrace();
@@ -88,7 +89,10 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
 
         try {
             if(!sqlConnection.isClosed()) {
+                databaseHandler.getPlugin().getLogger().info("Starting to save data!");
                 databaseHandler.getPlugin().getDataManager().getAllBounties().forEachRemaining(this::saveBountySync);
+                databaseHandler.getPlugin().getDataManager().getStatisticsManager().getAllLoadedPlayerStats().forEachRemaining(this::savePlayerStatisticsSync);
+                databaseHandler.getPlugin().getLogger().info("Datasaving has been completed...Preparing to shut down database");
                 sqlConnection.close();
             }
         }catch (Exception ignored){}
@@ -100,6 +104,47 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
     }
 
     @Override
+    public CompletableFuture<PlayerStatistics> getOrRegister(UUID uuid) {
+        return CompletableFuture.supplyAsync(new Supplier<PlayerStatistics>() {
+            @Override
+            public PlayerStatistics get() {
+                try {
+                    PreparedStatement ps = sqlConnection.prepareStatement("");
+                    if(ps == null)
+                        return new PlayerStatistics(uuid);
+
+                    ResultSet set = ps.executeQuery();
+
+                    if(set == null)
+                        return new PlayerStatistics(uuid);
+
+                    if(set.next()){
+                        final PlayerStatistics statistics = new PlayerStatistics(uuid,set.getInt("bounty_kills"),set.getInt("total_kills"),set.getInt("deaths"));
+                        set.close();
+                        ps.close();
+                        return statistics;
+                    }else {
+                        final PreparedStatement ps2 = sqlConnection.prepareStatement("INSERT INTO "+PLAYER_DATA_TABLE_NAME+" VALUES (?,?,?,?);");
+                        ps2.setString(1,uuid.toString());
+                        ps2.setInt(2,0);
+                        ps2.setInt(3,0);
+                        ps2.setInt(4,0);
+                        ps2.executeUpdate();
+                        ps2.close();
+
+                        set.close();
+                        ps.close();
+                        return new PlayerStatistics(uuid);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    return new PlayerStatistics(uuid);
+                }
+            }
+        });
+    }
+
+    /*
     public CompletableFuture<Optional<Bounty>> getIfPresent(@NotNull UUID uuid) {
         return CompletableFuture.supplyAsync(new Supplier<Optional<Bounty>>() {
             @Override
@@ -133,6 +178,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
             }
         });
     }
+     */
 
     @Override
     public void registerNewBounty(@NotNull Bounty bounty) {
@@ -209,12 +255,13 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
             @Override
             public void run() {
                try {
-                   PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ?;");
+                   PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ? WHERE `pl_id` = ?;");
                    if(ps == null)
                        return;
 
                    ps.setLong(1,bounty.getRemainingTime());
                    ps.setInt(2,bounty.getKilled());
+                   ps.setString(3,bounty.getPlayerUUID().toString());
 
                    ps.executeUpdate();
                    ps.close();
@@ -231,12 +278,65 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
             @Override
             public void run() {
                 try {
-                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ?;");
+                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ? WHERE `pl_id` = ?;");
                     if(ps == null)
                         return;
 
                     ps.setLong(1,bounty.getRemainingTime());
                     ps.setInt(2,bounty.getKilled());
+                    ps.setString(3,bounty.getPlayerUUID().toString());
+
+                    ps.executeUpdate();
+                    ps.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void savePlayerStatisticsSync(@NotNull PlayerStatistics statistics) {
+        databaseHandler.getPlugin().getServer().getScheduler().runTask(databaseHandler.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `total_kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
+
+                    if(ps == null)
+                        return;
+
+                    ps.setInt(1,statistics.getBountyKills());
+                    ps.setInt(2,statistics.getKills());
+                    ps.setInt(3,statistics.getDeaths());
+                    ps.setString(4,statistics.getPlayerID().toString());
+
+                    ps.executeUpdate();
+                    ps.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void savePlayerStatisticsAsync(@NotNull PlayerStatistics statistics) {
+        databaseHandler.getPlugin().getServer().getScheduler().runTaskAsynchronously(databaseHandler.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `total_kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
+
+                    if(ps == null)
+                        return;
+
+                    ps.setInt(1,statistics.getBountyKills());
+                    ps.setInt(2,statistics.getKills());
+                    ps.setInt(3,statistics.getDeaths());
+                    ps.setString(4,statistics.getPlayerID().toString());
 
                     ps.executeUpdate();
                     ps.close();

@@ -2,12 +2,12 @@ package com.semivanilla.bounties.storage.core;
 
 import com.semivanilla.bounties.model.Bounty;
 import com.semivanilla.bounties.model.BountyQueue;
+import com.semivanilla.bounties.model.PlayerStatistics;
 import com.semivanilla.bounties.storage.SQLite;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -47,14 +47,22 @@ public interface DataStorageImpl {
     String storageType();
 
     /**
-     * Gets an Optional Future if the Bounties' data is present in the Database
+     * This is a method used to fetch a player statistics ({@link PlayerStatistics} data from the database.
+     * The method is defined with in the name as getOrRegister, and as the name suggest, it should either get the data
+     * if it exists in database or if the requested data is not present, one should register a new data to the database
+     * and return the newly created along with it.
      *
-     * This method was used before favouring {@link DataStorageImpl#getAllCurrentBounties()} use case.
-     * see {@link DataStorageImpl#getAllCurrentBounties()}
-     * @param uuid UUID of the player to be fetched
-     * @return A Future or Optionally Wrapped Bounty Object
+     * In no case this should return a null value, if an exception is occurred, one can pass the
+     * {@link PlayerStatistics#PlayerStatistics(UUID)} constructor which will construct the object with the
+     * default values
+     *
+     * NOTE: PlayerStatistics are not stored in memory after a player leaves. That means it's loaded and updated when the
+     * player joins the server, leaves and server shutdowns.
+     *
+     * @param uuid UUID of the player that needed to be fetched/registered
+     * @return A future of PlayerStatistics
      */
-    CompletableFuture<Optional<Bounty>> getIfPresent(@NotNull UUID uuid);
+    CompletableFuture<PlayerStatistics> getOrRegister(UUID uuid);
 
     /**
      * Adds a new bounty to the storage when created!
@@ -100,6 +108,24 @@ public interface DataStorageImpl {
      */
     void saveBountySync(@NotNull Bounty bounty);
 
+    /**
+     * Save the statistics of a player on the main thread.
+     *
+     * This will be a synchronized task and will be used on the {@link JavaPlugin#onDisable()} or specifically {@link DataStorageImpl#close()} method. Since onDisable()
+     * method can't register an async task, This method will be only used to save the data to the database
+     * on server shutdown
+     * @param statistics Statistics of the player
+     */
+    void savePlayerStatisticsSync(@NotNull PlayerStatistics statistics);
+
+    /**
+     * Save the statistics of a player on the main thread.
+     *
+     * This should do an async task, This method will be called during the run-time and saving them in the main thread
+     * may cause the serious performance issues
+     * @param statistics
+     */
+    void savePlayerStatisticsAsync(@NotNull PlayerStatistics statistics);
     /**
      * Register a new reward queue to the database, if the player combat-logged in situations
      * @param queue {@link BountyQueue} object.

@@ -19,12 +19,17 @@ public final class PlayerConnectionListener implements Listener {
 
     /**
      * Tasks the event must undertake
-     * 1 -> Check if there are any reward queued upon the player
-     * 2 -> If there are reward queued up on the player, execute it and remove those reward from database
+     * 1 -> Load their player statistics.
+     * 2 -> Check if there are any reward queued upon the player.
+     * 3 -> If there are reward queued up on the player, execute it and remove those reward from database.
      */
     @EventHandler
     public void onPlayerConnect(PlayerJoinEvent event){
         final Player player = event.getPlayer();
+
+        plugin.getDatabaseHandler().getDataStorage().getOrRegister(player.getUniqueId()).thenAccept(stats -> {
+            plugin.getDataManager().getStatisticsManager().insertPlayerStatistics(stats);
+        });
 
         plugin.getDataManager().getRewardQueueManager().getAllQueueIfPresent(player.getUniqueId()).ifPresent((queuedRewardList) -> {
             if(queuedRewardList.isEmpty())
@@ -44,7 +49,7 @@ public final class PlayerConnectionListener implements Listener {
 
                         plugin.getDataManager().getRewardQueueManager().removeQueue(queue);
                     }
-                },5);
+                },20);
             }
         });
     }
@@ -53,12 +58,21 @@ public final class PlayerConnectionListener implements Listener {
      * Tasks this event should undertake
      * 1 ->  Remove them from the list as the exempted Player only persist data of
      * a single session
+     *
+     * 2 -> As a precaution save the data of the player when he logs out. A cache here won't be needed as the data is
+     * not removed from memory
      */
     @EventHandler
     public void onPlayerDisconnectEvent(PlayerQuitEvent event){
         final Player player = event.getPlayer();
 
         plugin.getDataManager().removeFromExemptedList(player);
+
+        if(plugin.getDataManager().isPlayerBounty(player)){
+            plugin.getDatabaseHandler().getDataStorage().saveBountyAsync(plugin.getDataManager().getBountyManager().getBounty(player));
+        }
+
+        plugin.getDatabaseHandler().getDataStorage().savePlayerStatisticsAsync(plugin.getDataManager().getStatisticsManager().getPlayerStatistics(player));
     }
 
 }

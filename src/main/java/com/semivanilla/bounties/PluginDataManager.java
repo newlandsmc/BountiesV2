@@ -1,6 +1,7 @@
 package com.semivanilla.bounties;
 
 import com.semivanilla.bounties.manager.BountyManager;
+import com.semivanilla.bounties.manager.PlayerStatisticsManager;
 import com.semivanilla.bounties.manager.PlayerTrackerManager;
 import com.semivanilla.bounties.manager.RewardQueueManager;
 import com.semivanilla.bounties.model.Bounty;
@@ -19,6 +20,7 @@ public final class PluginDataManager {
     private final BountyManager bountyManager;
     private final PlayerTrackerManager playerTrackerManager;
     private final RewardQueueManager rewardQueueManager;
+    private final PlayerStatisticsManager statisticsManager;
 
     private final List<UUID> exemptedPlayerList;
 
@@ -27,6 +29,7 @@ public final class PluginDataManager {
         this.bountyManager = new BountyManager(plugin);
         this.playerTrackerManager = new PlayerTrackerManager(plugin);
         this.rewardQueueManager = new RewardQueueManager(plugin);
+        this.statisticsManager = new PlayerStatisticsManager(plugin);
         this.exemptedPlayerList = new ArrayList<>();
     }
 
@@ -57,13 +60,19 @@ public final class PluginDataManager {
         return rewardQueueManager;
     }
 
+    public PlayerStatisticsManager getStatisticsManager() {
+        return statisticsManager;
+    }
+
     public Iterator<Bounty> getAllBounties(){
-        return bountyManager.getBountiesHashMap().values().iterator();
+        return bountyManager.getBountiesHashMap().values().stream().iterator();
     }
 
     public Iterator<Bounty> getOnlineBounties(){
         return bountyManager.getBountiesHashMap().values().stream().filter(Bounty::isPlayerOnline).iterator();
     }
+
+
 
     public void addToExemptedList(@NotNull final Player player){
         exemptedPlayerList.add(player.getUniqueId());

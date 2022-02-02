@@ -1,6 +1,7 @@
 package com.semivanilla.bounties.listener;
 
 import com.semivanilla.bounties.Bounties;
+import com.semivanilla.bounties.model.PlayerTracker;
 import net.badbird5907.anticombatlog.manager.NPCManager;
 import net.badbird5907.anticombatlog.object.CombatNPCTrait;
 import org.bukkit.event.EventHandler;
@@ -49,8 +50,13 @@ public final class PlayerDeathListener implements Listener {
         //Check if the kill is duplicated
         if(plugin.getDataManager().getPlayerTrackerManager().isDuplicatedKill(killerUID,deadPlayerUID)){
             //TODO Add Messages for this
+            System.out.println("The kill is duplicated");
+            plugin.getDataManager().getPlayerTrackerManager().updateKillForDuplicatedKill(killerUID);
             return;
         }
+
+        final PlayerTracker killTracker = new PlayerTracker(killerUID,deadPlayerUID);
+        plugin.getDataManager().getPlayerTrackerManager().addPlayerTracker(killTracker);
 
         //Check if they have permission to exempt from bounty
         if(event.getEntity().getKiller().hasPermission("bounty.bypass") || event.getEntity().hasPermission("bounty.bypass"))

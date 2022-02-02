@@ -37,11 +37,11 @@ public final class PlayerTrackerManager {
         return killedTrackerMap.get(killer).isKillerKilledSameAgain(killer,deadPlayer);
     }
 
-    public void updateKillForDuplicatedKill(@NotNull Player killer){
-        if(!killedTrackerMap.containsKey(killer.getUniqueId()))
+    public void updateKillForDuplicatedKill(@NotNull UUID killer){
+        if(!killedTrackerMap.containsKey(killer))
             return;
 
-        killedTrackerMap.get(killer.getUniqueId()).updateKillAgain();
+        killedTrackerMap.get(killer).updateKillAgain();
     }
 
     public HashMap<UUID, PlayerTracker> getKilledTrackerMap() {
