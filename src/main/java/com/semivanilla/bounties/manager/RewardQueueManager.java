@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class RewardQueueManager {
+public final class RewardQueueManager {
 
     private final Bounties plugin;
     private final List<BountyQueue> queueList;

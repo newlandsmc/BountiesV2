@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class BountyManager {
+public final class BountyManager {
 
     private final Bounties plugin;
     private final HashMap<UUID, Bounty> bountiesHashMap;

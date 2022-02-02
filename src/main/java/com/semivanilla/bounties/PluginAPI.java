@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PluginAPI implements BountiesAPI {
+public final class PluginAPI implements BountiesAPI {
 
     private final Bounties plugin;
 

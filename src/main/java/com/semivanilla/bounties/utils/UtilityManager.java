@@ -4,7 +4,7 @@ import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import com.semivanilla.bounties.utils.modules.MessagingUtils;
 
-public class UtilityManager {
+public final class UtilityManager {
 
     private final Bounties plugin;
 

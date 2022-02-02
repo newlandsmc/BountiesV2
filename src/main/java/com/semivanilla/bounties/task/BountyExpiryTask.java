@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-public class BountyExpiryTask extends BukkitRunnable {
+public final class BountyExpiryTask extends BukkitRunnable {
 
     private final BountyManager manager;
 

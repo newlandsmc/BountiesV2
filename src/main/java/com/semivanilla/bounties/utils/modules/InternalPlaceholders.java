@@ -2,13 +2,12 @@ package com.semivanilla.bounties.utils.modules;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 import java.util.UUID;
 
-public class InternalPlaceholders {
+public final class InternalPlaceholders {
 
     private static final boolean placeholderAPIEnabled;
 

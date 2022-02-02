@@ -7,7 +7,7 @@ import com.semivanilla.bounties.hook.skills.core.SkillImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class AureliumSkills implements SkillImpl {
+public final class AureliumSkills implements SkillImpl {
 
     private final HookManager manager;
 

@@ -6,7 +6,7 @@ import com.semivanilla.bounties.utils.modules.ExperienceUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class VanillaSkills implements SkillImpl {
+public final class VanillaSkills implements SkillImpl {
 
     private final HookManager manager;
 

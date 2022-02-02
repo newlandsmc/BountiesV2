@@ -7,8 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerConnectionListener implements Listener {
+public final class PlayerConnectionListener implements Listener {
 
     private final Bounties plugin;
 
@@ -16,6 +17,11 @@ public class PlayerConnectionListener implements Listener {
         this.plugin = plugin;
     }
 
+    /**
+     * Tasks the event must undertake
+     * 1 -> Check if there are any reward queued upon the player
+     * 2 -> If there are reward queued up on the player, execute it and remove those reward from database
+     */
     @EventHandler
     public void onPlayerConnect(PlayerJoinEvent event){
         final Player player = event.getPlayer();
@@ -41,6 +47,18 @@ public class PlayerConnectionListener implements Listener {
                 },5);
             }
         });
+    }
+
+    /**
+     * Tasks this event should undertake
+     * 1 ->  Remove them from the list as the exempted Player only persist data of
+     * a single session
+     */
+    @EventHandler
+    public void onPlayerDisconnectEvent(PlayerQuitEvent event){
+        final Player player = event.getPlayer();
+
+        plugin.getDataManager().removeFromExemptedList(player);
     }
 
 }

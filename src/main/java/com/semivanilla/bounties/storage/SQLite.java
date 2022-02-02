@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class SQLite extends AbstractSQL implements DataStorageImpl {
+public final class SQLite extends AbstractSQL implements DataStorageImpl {
 
     private final DatabaseHandler databaseHandler;
 

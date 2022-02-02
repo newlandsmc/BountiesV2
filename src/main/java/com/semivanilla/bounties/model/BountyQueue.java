@@ -4,7 +4,7 @@ import com.semivanilla.bounties.enums.QueueAction;
 
 import java.util.UUID;
 
-public class BountyQueue {
+public final class BountyQueue {
 
     private final UUID uuid;
     private final QueueAction action;

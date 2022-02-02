@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class Bounty {
+public final class Bounty {
 
     private final UUID playerUUID;
     private long remainingTime;

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MessageFormatter {
+public final class MessageFormatter {
     private final static MiniMessage messageFormatter;
 
     static {

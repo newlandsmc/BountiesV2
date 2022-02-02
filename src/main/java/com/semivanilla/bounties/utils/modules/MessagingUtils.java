@@ -14,7 +14,7 @@ import java.util.List;
 
 import static com.semivanilla.bounties.utils.modules.MessageFormatter.transform;
 
-public class MessagingUtils {
+public final class MessagingUtils {
 
     private final UtilityManager manager;
     private final BukkitAudiences audiences;

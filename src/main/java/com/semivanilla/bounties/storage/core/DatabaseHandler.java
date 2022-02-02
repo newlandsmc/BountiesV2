@@ -3,7 +3,7 @@ package com.semivanilla.bounties.storage.core;
 import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.storage.SQLite;
 
-public class DatabaseHandler {
+public final class DatabaseHandler {
 
     private final Bounties plugin;
 

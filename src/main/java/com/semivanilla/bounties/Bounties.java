@@ -4,6 +4,7 @@ import com.semivanilla.bounties.api.BountiesAPI;
 import com.semivanilla.bounties.config.Configuration;
 import com.semivanilla.bounties.hook.HookManager;
 import com.semivanilla.bounties.listener.PlayerConnectionListener;
+import com.semivanilla.bounties.listener.PlayerDeathListener;
 import com.semivanilla.bounties.storage.core.DatabaseHandler;
 import com.semivanilla.bounties.utils.UtilityManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,6 +46,7 @@ public final class Bounties extends JavaPlugin {
 
 
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathListener(this),this);
         //Load the API Atlast
         api = new PluginAPI(this);
     }

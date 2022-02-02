@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PlayerTracker {
+public final class PlayerTracker {
 
     private final UUID killer;
     private final UUID deadPlayer;
@@ -39,8 +39,8 @@ public class PlayerTracker {
         return deadPlayer;
     }
 
-    public boolean isKillerKilledSameAgain(@NotNull Player killer, @NotNull Player deadPlayer){
-        return this.killer == killer.getUniqueId() && this.deadPlayer == deadPlayer.getUniqueId();
+    public boolean isKillerKilledSameAgain(@NotNull UUID killer, @NotNull UUID deadPlayer){
+        return this.killer.equals(killer) && this.deadPlayer.equals(deadPlayer);
     }
 
     public Optional<Player> getKillerPlayerRef(){

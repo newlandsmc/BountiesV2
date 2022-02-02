@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class PlayerTrackerTask extends BukkitRunnable {
+public final class PlayerTrackerTask extends BukkitRunnable {
 
     private final PlayerTrackerManager manager;
 

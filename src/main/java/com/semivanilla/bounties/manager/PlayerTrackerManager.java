@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PlayerTrackerManager {
+public final class PlayerTrackerManager {
 
     private final Bounties plugin;
     private final HashMap<UUID, PlayerTracker> killedTrackerMap;
@@ -30,11 +30,11 @@ public class PlayerTrackerManager {
         killedTrackerMap.remove(uuid);
     }
 
-    public boolean isDuplicatedKill(@NotNull Player killer, @NotNull Player deadPlayer){
-        if(!killedTrackerMap.containsKey(killer.getUniqueId()))
+    public boolean isDuplicatedKill(@NotNull UUID killer, @NotNull UUID deadPlayer){
+        if(!killedTrackerMap.containsKey(killer))
             return false;
 
-        return killedTrackerMap.get(killer.getUniqueId()).isKillerKilledSameAgain(killer,deadPlayer);
+        return killedTrackerMap.get(killer).isKillerKilledSameAgain(killer,deadPlayer);
     }
 
     public void updateKillForDuplicatedKill(@NotNull Player killer){

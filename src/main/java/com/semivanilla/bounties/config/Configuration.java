@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-public class Configuration {
+public final class Configuration {
 
     private final Bounties plugin;
     private FileConfiguration configuration;

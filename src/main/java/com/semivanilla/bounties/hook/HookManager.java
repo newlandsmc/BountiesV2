@@ -6,7 +6,7 @@ import com.semivanilla.bounties.hook.skills.AureliumSkills;
 import com.semivanilla.bounties.hook.skills.VanillaSkills;
 import com.semivanilla.bounties.hook.skills.core.SkillImpl;
 
-public class HookManager {
+public final class HookManager {
 
     private final Bounties plugin;
 
