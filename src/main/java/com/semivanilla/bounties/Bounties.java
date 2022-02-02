@@ -12,7 +12,7 @@ public final class Bounties extends JavaPlugin {
     private DatabaseHandler databaseHandler;
     private PluginDataManager dataManager;
 
-    private static BountiesAPI api;
+    private static BountiesAPI api = null;
 
     @Override
     public void onEnable() {
@@ -20,7 +20,6 @@ public final class Bounties extends JavaPlugin {
         this.configuration = new Configuration(this);
         this.databaseHandler = new DatabaseHandler(this);
         this.dataManager = new PluginDataManager(this);
-        api = new PluginAPI(this);
 
         if(!configuration.initConfiguration()){
             getLogger().severe("Unable to instantiate configuration. The plugin will be disabled!");
@@ -38,6 +37,9 @@ public final class Bounties extends JavaPlugin {
         databaseHandler.getDataStorage().prepareDatabaseTables();
 
         dataManager.loadAllBounties();
+
+        //Load the API Atlast
+        api = new PluginAPI(this);
     }
 
     @Override
@@ -61,7 +63,10 @@ public final class Bounties extends JavaPlugin {
         return dataManager;
     }
 
-    public static BountiesAPI getBountyAPI() {
+    public static BountiesAPI getBountyAPI() throws IllegalAccessException {
+        if(api == null)
+            throw new IllegalAccessException("The plugin/API is not yet initialized!");
+        
         return api;
     }
 }

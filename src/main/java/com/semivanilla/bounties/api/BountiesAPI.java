@@ -9,14 +9,17 @@ import java.util.UUID;
 
 public interface BountiesAPI {
 
-    boolean isPlayerBounty(@NotNull Player player);
+    boolean isPlayerBounty(@NotNull final Player player);
 
-    Optional<Bounty> getBountyFor(@NotNull Player player);
+    @NotNull
+    Optional<Bounty> getBountyFor(@NotNull final Player player);
 
-    Optional<UUID> getLastKilledPlayer(@NotNull Player player);
+    @NotNull
+    Optional<UUID> getLastKilledPlayer(@NotNull final Player player);
 
-    int getPossibleLevelForBounty(@NotNull Player player);
+    int getPossibleLevelForBounty(@NotNull final Player player);
 
+    @NotNull
     String storageType();
 
 }

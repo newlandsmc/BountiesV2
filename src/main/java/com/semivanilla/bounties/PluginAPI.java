@@ -17,27 +17,30 @@ public class PluginAPI implements BountiesAPI {
     }
 
     @Override
-    public boolean isPlayerBounty(@NotNull Player player) {
+    public boolean isPlayerBounty(@NotNull final Player player) {
         return plugin.getDataManager().isPlayerBounty(player);
     }
 
     @Override
-    public Optional<Bounty> getBountyFor(@NotNull Player player) {
+    public @NotNull Optional<Bounty> getBountyFor(@NotNull final Player player) {
         return Optional.ofNullable(plugin.getDataManager().getBountyManager().getBountiesHashMap().getOrDefault(player.getUniqueId(), null));
     }
 
     @Override
-    public Optional<UUID> getLastKilledPlayer(@NotNull Player player) {
+    public @NotNull Optional<UUID> getLastKilledPlayer(@NotNull final Player player) {
         return Optional.empty();
     }
 
     @Override
-    public int getPossibleLevelForBounty(@NotNull Player player) {
-        return 0;
+    public int getPossibleLevelForBounty(@NotNull final Player player) {
+        if(!plugin.getDataManager().isPlayerBounty(player))
+            return 0;
+
+        return plugin.getConfiguration().getXPForKills(plugin.getDataManager().getBountyManager().getBountiesHashMap().get(player.getUniqueId()).getKilled());
     }
 
     @Override
-    public String storageType() {
+    public @NotNull String storageType() {
         return plugin.getDatabaseHandler().getDataStorage().storageType();
     }
 }
