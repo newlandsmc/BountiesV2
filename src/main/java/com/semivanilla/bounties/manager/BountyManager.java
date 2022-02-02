@@ -3,9 +3,11 @@ package com.semivanilla.bounties.manager;
 import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.model.Bounty;
 import com.semivanilla.bounties.task.BountyExpiryTask;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -55,11 +57,7 @@ public class BountyManager {
 
     public void clearBountyOn(@NotNull UUID killer){
         final Bounty bounty = bountiesHashMap.get(killer);
-        if(!bounty.isPlayerOnline()){
-            //TODO Add to remove XP Queue
-        }
-
-        bountiesHashMap.remove(bounty);
+        unloadBounty(killer);
         plugin.getDatabaseHandler().getDataStorage().removeABounty(killer);
     }
 
@@ -70,6 +68,7 @@ public class BountyManager {
         final Bounty bounty = bountiesHashMap.get(killer);
         bounty.addKill(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(plugin.getConfiguration().getBountyDuration()));
         //TODO Add Messages
+        plugin.getDatabaseHandler().getDataStorage().saveBountyAsync(bounty);
     }
 
     public int getCurrentBountySize(){
@@ -87,4 +86,13 @@ public class BountyManager {
     public Bounties getPlugin() {
         return plugin;
     }
+
+    public Bounty getBounty(@NotNull UUID uuid){
+        return bountiesHashMap.get(uuid);
+    }
+
+    public Bounty getBounty(@NotNull Player player){
+        return this.getBounty(player.getUniqueId());
+    }
+
 }

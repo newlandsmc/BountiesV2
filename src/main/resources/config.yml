@@ -25,3 +25,19 @@ rewards:
     3: 2000
     4: 2500
     5: 3000
+##########################################################################################################################
+##########################################################################################################################
+#Hooks
+##This defines how a specific 3rd party plugin should hook and behave with the plugin
+#
+#PlaceholderAPI
+##formatted-tag-for-bounty -> The message that would parse when %bs_tag% is used if the player is bounty. NOTE: PlaceholderAPI doesn't support MiniMessage, so use Legacy Color Codes
+#formatted-online-count.zero-online -> What would the plugin parse if there are no online bounties
+#formatted-online-count.online ->The no of online players when the list is not empty in a formatted way
+hook:
+  placeholder-api:
+    formatted-tag-for-bounty: "&c"
+    formatted-online-count:
+      zero-online: ""
+      online: "\n&cBounties Online: %online%"
+##########################################################################################################################

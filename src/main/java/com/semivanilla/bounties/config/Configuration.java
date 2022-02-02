@@ -1,6 +1,8 @@
 package com.semivanilla.bounties.config;
 
 import com.semivanilla.bounties.Bounties;
+import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
+import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
@@ -19,6 +21,8 @@ public class Configuration {
 
     private final HashMap<Integer,Integer> bountyKillReward = new HashMap<>();
     private final TreeSet<Integer> bountyKillMap = new TreeSet<>();
+
+    private String formattedPlaceholderBountyTag,formattedPlaceholderZeroOnline,formattedPlaceholderPlayersOnline;
 
     public Configuration(Bounties plugin) {
         this.plugin = plugin;
@@ -47,6 +51,10 @@ public class Configuration {
             bountyKillReward.put(Integer.parseInt(kills),configuration.getInt("rewards.bounty-rewards."+kills));
         });
         this.bountyKillMap.addAll(bountyKillReward.values());
+
+        this.formattedPlaceholderBountyTag = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-tag-for-bounty"));
+        this.formattedPlaceholderZeroOnline = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-online-count.zero-online"));
+        this.formattedPlaceholderPlayersOnline = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-online-count.online"));
     }
 
     public long getBountyDuration() {
@@ -70,5 +78,17 @@ public class Configuration {
             return bountyKillReward.get(kills);
 
         else return bountyKillReward.get(bountyKillMap.lower(kills));
+    }
+
+    public String getFormattedPlaceholderBountyTag() {
+        return formattedPlaceholderBountyTag;
+    }
+
+    public String getFormattedPlaceholderZeroOnline() {
+        return formattedPlaceholderZeroOnline;
+    }
+
+    public String getFormattedPlaceholderPlayersOnline(long onlineCount) {
+        return this.formattedPlaceholderPlayersOnline.replace("%online%",String.valueOf(onlineCount));
     }
 }

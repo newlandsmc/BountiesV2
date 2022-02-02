@@ -16,6 +16,12 @@ public class AureliumSkills implements SkillImpl {
     }
 
     @Override
+    public boolean hookWithAPI() {
+        manager.getPlugin().getLogger().info("The plugin will be hooked with AureliumAPI to provide Fighting XP");
+        return true;
+    }
+
+    @Override
     public void addXPForPlayer(@NotNull Player player, int xp) {
         AureliumAPI.addXp(player,Skills.FIGHTING,xp);
     }

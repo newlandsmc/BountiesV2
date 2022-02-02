@@ -2,6 +2,8 @@ name: Bounties
 version: '${project.version}'
 main: com.semivanilla.bounties.Bounties
 api-version: 1.18
-softdepend: [ AureliumSkills ]
+softdepend:
+  - AureliumSkills
+  - PlaceholderAPI
 authors: [ Alen_Alex ]
 description: This is a recoded version of orginal Bounties Plugin

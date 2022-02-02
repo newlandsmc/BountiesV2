@@ -15,6 +15,12 @@ public class VanillaSkills implements SkillImpl {
     }
 
     @Override
+    public boolean hookWithAPI() {
+        manager.getPlugin().getLogger().info("The plugin will be hooked with providing Default Vanilla XP");
+        return true;
+    }
+
+    @Override
     public void addXPForPlayer(@NotNull Player player, int xp) {
         player.giveExp(xp);
     }

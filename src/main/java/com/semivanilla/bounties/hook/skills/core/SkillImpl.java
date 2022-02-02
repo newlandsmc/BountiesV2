@@ -5,9 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface SkillImpl {
 
-    default boolean hookWithAPI() {
-        return true;
-    }
+    boolean hookWithAPI();
 
     void addXPForPlayer(@NotNull Player player, int xp);
 

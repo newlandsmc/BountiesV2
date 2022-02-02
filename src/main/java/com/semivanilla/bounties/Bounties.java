@@ -3,6 +3,7 @@ package com.semivanilla.bounties;
 import com.semivanilla.bounties.api.BountiesAPI;
 import com.semivanilla.bounties.config.Configuration;
 import com.semivanilla.bounties.hook.HookManager;
+import com.semivanilla.bounties.listener.PlayerConnectionListener;
 import com.semivanilla.bounties.storage.core.DatabaseHandler;
 import com.semivanilla.bounties.utils.UtilityManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,6 +43,8 @@ public final class Bounties extends JavaPlugin {
 
         dataManager.loadAllBounties();
 
+
+        getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
         //Load the API Atlast
         api = new PluginAPI(this);
     }
@@ -67,10 +70,16 @@ public final class Bounties extends JavaPlugin {
         return dataManager;
     }
 
+    public HookManager getHookManager() {
+        return hookManager;
+    }
+
     public static BountiesAPI getBountyAPI() throws IllegalAccessException {
         if(api == null)
             throw new IllegalAccessException("The plugin/API is not yet initialized!");
 
         return api;
     }
+    
+
 }

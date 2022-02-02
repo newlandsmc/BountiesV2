@@ -44,6 +44,10 @@ public class PluginDataManager {
         return playerTrackerManager;
     }
 
+    public RewardQueueManager getRewardQueueManager() {
+        return rewardQueueManager;
+    }
+
     public Iterator<Bounty> getAllBounties(){
         return bountyManager.getBountiesHashMap().values().iterator();
     }
@@ -51,4 +55,6 @@ public class PluginDataManager {
     public Iterator<Bounty> getOnlineBounties(){
         return bountyManager.getBountiesHashMap().values().stream().filter(Bounty::isPlayerOnline).iterator();
     }
+
+
 }
