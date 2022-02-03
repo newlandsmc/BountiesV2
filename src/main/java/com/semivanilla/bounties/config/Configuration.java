@@ -1,11 +1,11 @@
 package com.semivanilla.bounties.config;
 
 import com.semivanilla.bounties.Bounties;
-import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 public final class Configuration {
@@ -23,6 +23,9 @@ public final class Configuration {
     private final TreeSet<Integer> bountyKillMap = new TreeSet<>();
 
     private String formattedPlaceholderBountyTag,formattedPlaceholderZeroOnline,formattedPlaceholderPlayersOnline;
+
+    private int messageDelay;
+    private List<String> messageBroadcastNewBounty, messageBroadcastBountyGrows,messageBroadcastBountyClaimed,messagePlayerSpamKiller,messagePlayerSpamVictim;
 
     public Configuration(Bounties plugin) {
         this.plugin = plugin;
@@ -50,11 +53,18 @@ public final class Configuration {
         this.configuration.getConfigurationSection("rewards.bounty-rewards").getKeys(false).forEach((kills) -> {
             bountyKillReward.put(Integer.parseInt(kills),configuration.getInt("rewards.bounty-rewards."+kills));
         });
-        this.bountyKillMap.addAll(bountyKillReward.values());
+        this.bountyKillMap.addAll(bountyKillReward.keySet().stream().toList());
 
         this.formattedPlaceholderBountyTag = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-tag-for-bounty"));
         this.formattedPlaceholderZeroOnline = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-online-count.zero-online"));
         this.formattedPlaceholderPlayersOnline = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-online-count.online"));
+
+        this.messageDelay = this.configuration.getInt("messages.interval-in-sec-to-send-message");
+        this.messageBroadcastNewBounty = this.configuration.getStringList("messages.new-bounty-broadcast");
+        this.messageBroadcastBountyGrows = this.configuration.getStringList("messages.existing-bounty-broadcast");
+        this.messageBroadcastBountyClaimed = this.configuration.getStringList("messages.player-bounty-released-broadcast");
+        this.messagePlayerSpamKiller = this.configuration.getStringList("messages.already-killed-before.killer");
+        this.messagePlayerSpamVictim = this.configuration.getStringList("messages.already-killed-before.victim");
     }
 
     public long getBountyDuration() {
@@ -88,7 +98,31 @@ public final class Configuration {
         return formattedPlaceholderZeroOnline;
     }
 
+    public int getMessageDelay() {
+        return messageDelay;
+    }
+
+    public List<String> getMessageBroadcastNewBounty() {
+        return messageBroadcastNewBounty;
+    }
+
     public String getFormattedPlaceholderPlayersOnline(long onlineCount) {
         return this.formattedPlaceholderPlayersOnline.replace("%online%",String.valueOf(onlineCount));
+    }
+
+    public List<String> getMessageBroadcastBountyGrows() {
+        return messageBroadcastBountyGrows;
+    }
+
+    public List<String> getMessageBroadcastBountyClaimed() {
+        return messageBroadcastBountyClaimed;
+    }
+
+    public List<String> getMessagePlayerSpamKiller() {
+        return messagePlayerSpamKiller;
+    }
+
+    public List<String> getMessagePlayerSpamVictim() {
+        return messagePlayerSpamVictim;
     }
 }

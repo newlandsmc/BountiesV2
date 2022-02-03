@@ -44,7 +44,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
         PreparedStatement ps1 = null,ps2 = null,ps3 = null;
         try {
             ps1 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+BOUNTY_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `kills` INTEGER NOT NULL , `time` INTEGER NOT NULL );");
-            ps2 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+PLAYER_DATA_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `bounty_kills` INTEGER NOT NULL DEFAULT  0,`total_kills` INTEGER NOT NULL DEFAULT  0,`deaths` INTEGER NOT NULL DEFAULT  0);");
+            ps2 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+PLAYER_DATA_TABLE_NAME+"  (`pl_id` VARCHAR(40) NOT NULL, `bounty_kills` INTEGER NOT NULL DEFAULT  0,`kills` INTEGER NOT NULL DEFAULT  0,`deaths` INTEGER NOT NULL DEFAULT  0);");
             ps3 = sqlConnection.prepareStatement("CREATE TABLE IF NOT EXISTS "+ XP_QUEUE_TABLE_NAME +"  (`pl_id` VARCHAR(40) NOT NULL,`xp` INTEGER NOT NULL, `action` VARCHAR(10) NOT NULL);");
 
             ps1.execute();
@@ -109,9 +109,11 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
             @Override
             public PlayerStatistics get() {
                 try {
-                    PreparedStatement ps = sqlConnection.prepareStatement("");
+                    PreparedStatement ps = sqlConnection.prepareStatement("SELECT * FROM "+PLAYER_DATA_TABLE_NAME+" WHERE `pl_id` = ?;");
                     if(ps == null)
                         return new PlayerStatistics(uuid);
+
+                    ps.setString(1,uuid.toString());
 
                     ResultSet set = ps.executeQuery();
 
@@ -119,7 +121,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
                         return new PlayerStatistics(uuid);
 
                     if(set.next()){
-                        final PlayerStatistics statistics = new PlayerStatistics(uuid,set.getInt("bounty_kills"),set.getInt("total_kills"),set.getInt("deaths"));
+                        final PlayerStatistics statistics = new PlayerStatistics(uuid,set.getInt("bounty_kills"),set.getInt("kills"),set.getInt("deaths"));
                         set.close();
                         ps.close();
                         return statistics;
@@ -302,7 +304,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
             public void run() {
                 try {
 
-                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `total_kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
+                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
 
                     if(ps == null)
                         return;
@@ -328,7 +330,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
             public void run() {
                 try {
 
-                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `total_kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
+                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
 
                     if(ps == null)
                         return;

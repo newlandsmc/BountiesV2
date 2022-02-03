@@ -41,3 +41,30 @@ hook:
       zero-online: ""
       online: "\n&cBounties Online: %online%"
 ##########################################################################################################################
+messages:
+  interval-in-sec-to-send-message: 10
+  #Available Placeholders:
+  #%dead_player% -> Name of the dead player
+  #%killer% -> Name of the killer
+  new-bounty-broadcast:
+    - "<gray> * %dead_player% was slain by %killer%"
+    - "<gray> * %killer% now has a bounty on their head!"
+  #Available Placeholders:
+  #%dead_player% -> Name of the dead player
+  #%killer% -> Name of the killer
+  existing-bounty-broadcast:
+    - "<gray> * %dead_player% was slain by %killer%"
+    - "<gray> * %killer%'s bounty grows..."
+  #Available Placeholders:
+  #%dead_player% -> Name of the dead player
+  #%killer% -> Name of the killer
+  player-bounty-released-broadcast:
+    - "<gray> * %dead_player%'s bounty has been claimed by %killer%"
+  #Available Placeholders:
+  #%dead_player% -> Name of the dead player
+  #%killer% -> Name of the killer
+  already-killed-before:
+    killer:
+      - "<gray> * You killed %dead_player% again!"
+    victim:
+      - "<gray> * %bounty% killed you again!"

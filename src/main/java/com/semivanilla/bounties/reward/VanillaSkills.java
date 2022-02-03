@@ -1,12 +1,12 @@
-package com.semivanilla.bounties.hook.skills;
+package com.semivanilla.bounties.reward;
 
 import com.semivanilla.bounties.hook.HookManager;
-import com.semivanilla.bounties.hook.skills.core.SkillImpl;
+import com.semivanilla.bounties.reward.core.XPImpl;
 import com.semivanilla.bounties.utils.modules.ExperienceUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class VanillaSkills implements SkillImpl {
+public final class VanillaSkills implements XPImpl {
 
     private final HookManager manager;
 

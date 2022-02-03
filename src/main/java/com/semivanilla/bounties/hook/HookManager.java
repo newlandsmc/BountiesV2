@@ -3,14 +3,13 @@ package com.semivanilla.bounties.hook;
 import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.hook.placeholderAPI.PlaceholderRegister;
 import com.semivanilla.bounties.hook.skills.AureliumSkills;
-import com.semivanilla.bounties.hook.skills.VanillaSkills;
-import com.semivanilla.bounties.hook.skills.core.SkillImpl;
+import com.semivanilla.bounties.reward.VanillaSkills;
 
 public final class HookManager {
 
     private final Bounties plugin;
 
-    private SkillImpl XPImpl;
+    private com.semivanilla.bounties.reward.core.XPImpl XPImpl;
 
     public HookManager(Bounties plugin) {
         this.plugin = plugin;
@@ -36,7 +35,7 @@ public final class HookManager {
         }
     }
 
-    public SkillImpl getXPImpl() {
+    public com.semivanilla.bounties.reward.core.XPImpl getXPImpl() {
         return XPImpl;
     }
 

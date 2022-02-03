@@ -32,6 +32,17 @@ public final class MessagingUtils {
         audiences.player(player).sendMessage(transform(message,placeholders));
     }
 
+    public void sendInInterval(@NotNull final Player player, List<String> message, int interval, InternalPlaceholders... placeholders){
+        message.forEach(m->{
+            manager.getPlugin().getServer().getScheduler().runTaskLater(manager.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    sendTo(player,m,placeholders);
+                }
+            },interval);
+        });
+    }
+
     public void sendTo(@NotNull final Player player, List<String> messages){
         messages.forEach(m -> {
             this.sendTo(player,m);
@@ -122,6 +133,36 @@ public final class MessagingUtils {
     public void broadcast(String message){
         if(StringUtils.isBlank(message))
             return;
-        audiences.all().sendMessage(transform(message));
+        manager.getPlugin().getServer().getScheduler().runTask(manager.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                audiences.all().sendMessage(transform(message));
+            }
+        });
+    }
+
+    public void broadcast(String message, InternalPlaceholders... placeholders){
+        String msg = message;
+        for(InternalPlaceholders pl : placeholders){
+            msg = pl.replacePlaceholders(msg);
+        }
+        broadcast(message);
+    }
+
+    public void broadcast(@NotNull List<String> message, InternalPlaceholders... placeholders){
+        message.forEach((m) -> {
+            this.broadcast(m,placeholders);
+        });
+    }
+
+    public void broadcastAsync(@NotNull List<String> message, int interval, InternalPlaceholders... placeholders){
+        message.forEach((m) -> {
+            manager.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(manager.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    broadcast(message, placeholders);
+                }
+            },interval);
+        });
     }
 }

@@ -41,6 +41,11 @@ public final class PlayerConnectionListener implements Listener {
                 plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
                     @Override
                     public void run() {
+                        if(!player.isOnline()) {
+                            plugin.getLogger().info("The player "+player.getName()+" went offline while executing rewards!");
+                            return;
+                        }
+
                         if(queue.getAction() == QueueAction.ADD_XP){
                             plugin.getHookManager().getXPImpl().addXPForPlayer(player,queue.getValueToExecute());
                         }else {

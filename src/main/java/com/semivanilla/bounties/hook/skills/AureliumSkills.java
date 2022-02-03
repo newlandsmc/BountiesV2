@@ -3,11 +3,11 @@ package com.semivanilla.bounties.hook.skills;
 import com.archyx.aureliumskills.api.AureliumAPI;
 import com.archyx.aureliumskills.skills.Skills;
 import com.semivanilla.bounties.hook.HookManager;
-import com.semivanilla.bounties.hook.skills.core.SkillImpl;
+import com.semivanilla.bounties.reward.core.XPImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class AureliumSkills implements SkillImpl {
+public final class AureliumSkills implements XPImpl {
 
     private final HookManager manager;
 

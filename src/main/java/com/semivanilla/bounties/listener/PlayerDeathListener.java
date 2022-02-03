@@ -1,9 +1,12 @@
 package com.semivanilla.bounties.listener;
 
 import com.semivanilla.bounties.Bounties;
+import com.semivanilla.bounties.enums.QueueAction;
 import com.semivanilla.bounties.model.PlayerTracker;
+import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
 import net.badbird5907.anticombatlog.manager.NPCManager;
 import net.badbird5907.anticombatlog.object.CombatNPCTrait;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -27,48 +30,133 @@ public final class PlayerDeathListener implements Listener {
      */
     @EventHandler
     public void onPlayerDeathEvent(PlayerDeathEvent event){
+        boolean isDeadCombatLogged = false;
+        boolean deadPlayerWasBounty = false;
+
+        String deadName = null;
         final UUID deadPlayerUID;
-        if(event.getEntity() == null){
-            if(event.getEntity().hasMetadata("NPC") && NPCManager.getNPCRegistry().getNPC(event.getEntity()).hasTrait(CombatNPCTrait.class)){
+        if(event.getEntity().hasMetadata("NPC") && NPCManager.getNPCRegistry().getNPC(event.getEntity()).hasTrait(CombatNPCTrait.class)){
                 CombatNPCTrait trait = NPCManager.getNPCRegistry().getNPC(event.getEntity()).getTraitNullable(CombatNPCTrait.class);
                 deadPlayerUID = trait.getUuid();
-            }else {
-                //This isn't a combat logged situation too, it wouldn't happen, but to avoid NPE, we can just return it
-                //from here
-                return;
-            }
+                deadName = trait.getName();
+                isDeadCombatLogged = true;
         } else {
             deadPlayerUID = event.getEntity().getUniqueId();
+            deadName = event.getEntity().getName();
         }
 
         //If there is no killer, it means the player died with something else than PvP
         if(event.getEntity().getKiller() == null)
             return;
 
+        final Player killer = event.getEntity().getKiller();
         final UUID killerUID = event.getEntity().getKiller().getUniqueId();
+
+        if(isDeadCombatLogged){
+            plugin.getDatabaseHandler().getDataStorage().getOrRegister(deadPlayerUID).thenAccept((stats) -> {
+               stats.addDeath();
+               plugin.getDatabaseHandler().getDataStorage().savePlayerStatisticsAsync(stats);
+            });
+        }else {
+            plugin.getDataManager().getStatisticsManager().addDeathForPlayer(deadPlayerUID);
+        }
+
+        //TODO Remove this after testing...I have only 1 acc to test :cry:
 
         //Check if the kill is duplicated
         if(plugin.getDataManager().getPlayerTrackerManager().isDuplicatedKill(killerUID,deadPlayerUID)){
-            //TODO Add Messages for this
-            System.out.println("The kill is duplicated");
+
+            plugin.getUtilityManager().getMessagingUtils().sendInInterval(plugin.getServer().getPlayer(deadPlayerUID)
+            ,plugin.getConfiguration().getMessagePlayerSpamVictim(),
+                    plugin.getConfiguration().getMessageDelay(),
+                    new InternalPlaceholders("%dead_player%",deadName),
+                    new InternalPlaceholders("%killer%",killer.getName()));
+
+            plugin.getUtilityManager().getMessagingUtils().sendInInterval(killer
+                    ,plugin.getConfiguration().getMessagePlayerSpamVictim(),
+                    plugin.getConfiguration().getMessageDelay(),
+                    new InternalPlaceholders("%dead_player%",deadName),
+                    new InternalPlaceholders("%killer%",killer.getName()));
+
             plugin.getDataManager().getPlayerTrackerManager().updateKillForDuplicatedKill(killerUID);
+            plugin.getDataManager().getStatisticsManager().addKillForPlayer(killerUID);
             return;
         }
+
 
         final PlayerTracker killTracker = new PlayerTracker(killerUID,deadPlayerUID);
         plugin.getDataManager().getPlayerTrackerManager().addPlayerTracker(killTracker);
 
         //Check if they have permission to exempt from bounty
-        if(event.getEntity().getKiller().hasPermission("bounty.bypass") || event.getEntity().hasPermission("bounty.bypass"))
+        if(event.getEntity().getKiller().hasPermission("bounty.bypass") || event.getEntity().hasPermission("bounty.bypass")) {
+            plugin.getDataManager().getStatisticsManager().addKillForPlayer(killerUID);
             return;
+        }
 
-        if(plugin.getDataManager().isPlayerExempted(killerUID) || plugin.getDataManager().isPlayerExempted(deadPlayerUID))
+        if(plugin.getDataManager().isPlayerExempted(killerUID) || plugin.getDataManager().isPlayerExempted(deadPlayerUID)) {
+            plugin.getDataManager().getStatisticsManager().addKillForPlayer(killerUID);
             return;
+        }
 
         event.setDeathMessage(null);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //The dead-player is a bounty
         if(plugin.getDataManager().isPlayerBounty(deadPlayerUID)){
-            //TODO Add bounty player kill to the player
+            deadPlayerWasBounty = true;
+            //Adds a bounty kill to the killer
+            plugin.getDataManager().getStatisticsManager().addBountyKillForPlayer(killerUID);
+
+            final int xpToProcess = plugin.getConfiguration().getXPForKills(plugin.getDataManager().getBountyManager().getBounty(deadPlayerUID).getKilled());
+            //If the player combat logged, Queue his XP Removal, add xp to player
+            if(isDeadCombatLogged){
+                plugin.getDataManager().getRewardQueueManager().registerNewRewardQueue(deadPlayerUID, QueueAction.REMOVE_XP,xpToProcess);
+                plugin.getHookManager().getXPImpl().addXPForPlayer(killer,xpToProcess);
+            }else {
+                //If not, do the action immediately
+                plugin.getHookManager().getXPImpl().addXPForPlayer(killer,xpToProcess);
+                plugin.getHookManager().getXPImpl().removeXPForPlayer(event.getEntity().getPlayer(),xpToProcess);
+            }
+
+            //Remove the bounty on his head
+            plugin.getDataManager().getBountyManager().clearBountyOn(deadPlayerUID);
+            plugin.getUtilityManager().getMessagingUtils().broadcastAsync(plugin.getConfiguration().getMessageBroadcastBountyClaimed(),
+                    plugin.getConfiguration().getMessageDelay(),
+                    new InternalPlaceholders("%dead_player%",deadName),
+                    new InternalPlaceholders("%killer%",killer.getName()));
+
+        }else {
+            //The dead player is not a bounty, But there are still rewards.
+            //Execute the reward, If the deadplayer is combat logged in this situation, queue the xp to add
+            if(isDeadCombatLogged){
+                plugin.getDataManager().getRewardQueueManager().registerNewRewardQueue(deadPlayerUID, QueueAction.REMOVE_XP,plugin.getConfiguration().getXPForNonBountyPlayer());
+                plugin.getHookManager().getXPImpl().addXPForPlayer(killer,plugin.getConfiguration().getXPForNonBountyPlayer());
+            }else {
+                //If not combat logged, process to process XP
+                plugin.getHookManager().getXPImpl().addXPForPlayer(killer,plugin.getConfiguration().getXPForNonBountyPlayer());
+                plugin.getHookManager().getXPImpl().removeXPForPlayer(event.getEntity().getPlayer(),plugin.getConfiguration().getXPForNonBountyPlayer());
+            }
+        }
+
+        //If the dead player was a bounty, we don't want to create a new bounty nor add kill to the killer, even if he is a bounty
+        if(deadPlayerWasBounty)
+            return;
+
+        //If the dead player is not bounty
+        // and if the killer is a bounty, that means he killed another non- bounty player, so update kill on him
+        if(plugin.getDataManager().getBountyManager().isBounty(killerUID)){
+            plugin.getDataManager().getBountyManager().updateKillOn(killerUID);
+            plugin.getUtilityManager().getMessagingUtils().broadcastAsync(plugin.getConfiguration().getMessageBroadcastBountyGrows(),
+                    plugin.getConfiguration().getMessageDelay(),
+                    new InternalPlaceholders("%dead_player%",deadName),
+                    new InternalPlaceholders("%killer%",killer.getName()));
+        }else {
+            //If the killer is not a bounty, that means his head should have a bounty
+            plugin.getDataManager().getBountyManager().createBountyOn(killerUID);
+            plugin.getUtilityManager().getMessagingUtils().broadcastAsync(plugin.getConfiguration().getMessageBroadcastNewBounty(),
+                    plugin.getConfiguration().getMessageDelay(),
+                    new InternalPlaceholders("%dead_player%",deadName),
+                    new InternalPlaceholders("%killer%",killer.getName()));
+
         }
 
     }

@@ -3,6 +3,7 @@ package com.semivanilla.bounties.manager;
 import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.model.Bounty;
 import com.semivanilla.bounties.task.BountyExpiryTask;
+import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,14 +23,6 @@ public final class BountyManager {
         this.bountiesHashMap = new HashMap<UUID, Bounty>();
         this.expiryTask = new BountyExpiryTask(this);
         this.expiryTask.runTaskTimerAsynchronously(plugin,60,20);
-    }
-
-    public void loadBounty(@NotNull UUID uuid){
-        plugin.getDatabaseHandler().getDataStorage().getIfPresent(uuid).thenAccept((bounty -> {
-            if(bounty.isEmpty())
-                return;
-            bountiesHashMap.put(bounty.get().getPlayerUUID(),bounty.get());
-        }));
     }
 
     public void loadBounty(@NotNull Bounty bounty){
@@ -55,10 +48,11 @@ public final class BountyManager {
         plugin.getDatabaseHandler().getDataStorage().registerNewBounty(bounty);
     }
 
-    public void clearBountyOn(@NotNull UUID killer){
-        final Bounty bounty = bountiesHashMap.get(killer);
-        unloadBounty(killer);
-        plugin.getDatabaseHandler().getDataStorage().removeABounty(killer);
+    public void clearBountyOn(@NotNull UUID deadPlayer){
+        final Bounty bounty = bountiesHashMap.get(deadPlayer);
+        unloadBounty(deadPlayer);
+        plugin.getDatabaseHandler().getDataStorage().removeABounty(deadPlayer);
+        //TODO Bounty killed message
     }
 
     public void updateKillOn(@NotNull UUID killer){

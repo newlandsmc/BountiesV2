@@ -44,6 +44,13 @@ public final class Bounties extends JavaPlugin {
 
         dataManager.loadAllBounties();
 
+        hookManager.initHooks();
+        if(!hookManager.getXPImpl().hookWithAPI()){
+            getLogger().severe("Unable to connect properly with XP Provider!, the plugin will be disabled");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
 
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(this),this);

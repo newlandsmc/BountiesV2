@@ -1,9 +1,9 @@
-package com.semivanilla.bounties.hook.skills.core;
+package com.semivanilla.bounties.reward.core;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public interface SkillImpl {
+public interface XPImpl {
 
     boolean hookWithAPI();
 

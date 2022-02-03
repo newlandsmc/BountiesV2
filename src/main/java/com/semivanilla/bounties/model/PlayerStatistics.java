@@ -56,7 +56,6 @@ public final class PlayerStatistics {
     }
 
     public void addBountyKills(){
-        this.kills++;
         this.bountyKills++;
     }
 

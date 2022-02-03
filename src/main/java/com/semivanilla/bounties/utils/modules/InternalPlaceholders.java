@@ -2,6 +2,7 @@ package com.semivanilla.bounties.utils.modules;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
@@ -84,5 +85,6 @@ public final class InternalPlaceholders {
         }));
         return ref.retMessage;
     }
+
 
 }
