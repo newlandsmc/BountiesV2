@@ -99,6 +99,41 @@ public final class PlaceholderRegister extends PlaceholderExpansion {
             else return "";
         }
 
+        /**
+         * Return no of bounties the player killed
+         */
+        if(params.equalsIgnoreCase("bkills")){
+            if(manager.getPlugin().getDataManager().getStatisticsManager().getStatisticsHashMap().containsKey(player.getUniqueId()))
+                return String.valueOf(manager.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getBountyKills());
+            else return "0";
+        }
+
+        /**
+         * Return no of non-bounties the player killed
+         */
+        if(params.equalsIgnoreCase("nonbkills")){
+            if(manager.getPlugin().getDataManager().getStatisticsManager().getStatisticsHashMap().containsKey(player.getUniqueId()))
+                return String.valueOf(manager.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getKills());
+            else return "0";
+        }
+
+        /**
+         * Return no of player caused death the player have
+         */
+        if(params.equalsIgnoreCase("deaths")){
+            if(manager.getPlugin().getDataManager().getStatisticsManager().getStatisticsHashMap().containsKey(player.getUniqueId()))
+                return String.valueOf(manager.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getDeaths());
+            else return "0";
+        }
+
+        /**
+         * Retuns the KD of the player
+         */
+        if(params.equalsIgnoreCase("kd")){
+            if(manager.getPlugin().getDataManager().getStatisticsManager().getStatisticsHashMap().containsKey(player.getUniqueId()))
+                return String.valueOf(manager.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getKDRatio());
+            else return "0";
+        }
 
         return null;
     }
