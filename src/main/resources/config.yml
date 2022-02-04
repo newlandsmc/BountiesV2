@@ -43,6 +43,12 @@ hook:
 ##########################################################################################################################
 messages:
   interval-in-sec-to-send-message: 10
+  help-message:
+    header:
+      - "<yellow><strikethrough>                         <reset> Bounty Help <yellow><strikethrough>                         <reset>"
+    command-description: "<gold>%command%<white>: %description%"
+    footer:
+      - "<yellow><strikethrough>                                                                  <reset>"
   #Available Placeholders:
   #%dead_player% -> Name of the dead player
   #%killer% -> Name of the killer

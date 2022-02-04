@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 public final class PluginDataManager {
@@ -72,6 +73,9 @@ public final class PluginDataManager {
         return bountyManager.getBountiesHashMap().values().stream().filter(Bounty::isPlayerOnline).iterator();
     }
 
+    public List<String> getOnlineBountyNames(){
+        return bountyManager.getBountiesHashMap().values().stream().filter(Bounty::isPlayerOnline).map(b ->b.getPlayer().get().getName()).collect(Collectors.toList());
+    }
 
 
     public void addToExemptedList(@NotNull final Player player){

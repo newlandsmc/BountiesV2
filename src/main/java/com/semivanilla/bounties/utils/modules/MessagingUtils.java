@@ -40,6 +40,12 @@ public final class MessagingUtils {
         audiences.sender(sender).sendMessage(message);
     }
 
+    public void sendTo(@NotNull final CommandSender sender, List<String> message){
+        message.forEach((eachLine) -> {
+            sendTo(sender,MessageFormatter.transform(eachLine));
+        });
+    }
+
     public void sendTo(@NotNull final Player player, String message, InternalPlaceholders... placeholders){
         audiences.player(player).sendMessage(MessageFormatter.transform(message,placeholders));
     }

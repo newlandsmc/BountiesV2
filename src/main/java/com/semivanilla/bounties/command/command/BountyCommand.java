@@ -1,9 +1,12 @@
 package com.semivanilla.bounties.command.command;
 
 import com.semivanilla.bounties.command.CommandHandler;
+import com.semivanilla.bounties.utils.modules.MessagingUtils;
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Default;
+import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @Command("bounty")
@@ -17,7 +20,21 @@ public class BountyCommand extends CommandBase {
 
     @Default
     public void onDefaultCommand(final Player player){
-        player.sendMessage("Open GUI");
+        handler.getPlugin().getGuiHandler().getBountyMenu().openMenu(player);
+    }
+
+    @SubCommand("help")
+    public void onHelpCommand(final CommandSender sender){
+        handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,handler.getPlugin().getConfiguration().getMessageHelpHeader());
+        CommandHandler.playerHelpMap.forEach((command,descr) -> {
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,handler.getPlugin().getConfiguration().getMessageHelpContent(command,descr));
+        });
+        if(sender.hasPermission("bounty.admin")){
+            CommandHandler.adminHelpMap.forEach((command,descr) -> {
+                handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,handler.getPlugin().getConfiguration().getMessageHelpContent(command,descr));
+            });
+        }
+        handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,handler.getPlugin().getConfiguration().getMessageHelpFooter());
     }
 
 

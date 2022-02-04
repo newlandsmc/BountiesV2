@@ -28,6 +28,9 @@ public final class Configuration {
     private int messageDelay;
     private List<String> messageBroadcastNewBounty, messageBroadcastBountyGrows,messageBroadcastBountyClaimed,messagePlayerSpamKiller,messagePlayerSpamVictim;
 
+    private List<String> messageHelpHeader,messageHelpFooter;
+    private String messageHelpContent;
+
     public Configuration(Bounties plugin) {
         this.plugin = plugin;
     }
@@ -67,6 +70,10 @@ public final class Configuration {
         this.messageBroadcastBountyClaimed = this.configuration.getStringList("messages.player-bounty-released-broadcast");
         this.messagePlayerSpamKiller = this.configuration.getStringList("messages.already-killed-before.killer");
         this.messagePlayerSpamVictim = this.configuration.getStringList("messages.already-killed-before.victim");
+
+        this.messageHelpHeader = this.configuration.getStringList("messages.help-message.header");
+        this.messageHelpContent = this.configuration.getString("messages.help-message.footer");
+        this.messageHelpFooter = this.configuration.getStringList("messages.help-message.command-description");
     }
 
     public long getBountyDuration() {
@@ -145,5 +152,17 @@ public final class Configuration {
 
     public List<String> getMessagePlayerSpamVictim() {
         return messagePlayerSpamVictim;
+    }
+
+    public List<String> getMessageHelpHeader() {
+        return messageHelpHeader;
+    }
+
+    public List<String> getMessageHelpFooter() {
+        return messageHelpFooter;
+    }
+
+    public String getMessageHelpContent(String command,String desc) {
+        return messageHelpContent.replace("%command%",command).replace("%description%",desc);
     }
 }

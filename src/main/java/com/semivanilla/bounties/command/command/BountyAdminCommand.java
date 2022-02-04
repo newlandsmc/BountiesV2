@@ -25,7 +25,7 @@ public class BountyAdminCommand extends CommandBase {
 
     @SubCommand("create")
     @Permission("bounty.command.create")
-    //TODO @Completion({"#players"})
+    @Completion({"#players","#range"})
     public void onCreateCommand(final CommandSender sender, final Player player, @Optional Integer time){
         if(player == null){
             handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.INVALID_PLAYER_ARGS.getResponse());
@@ -42,7 +42,7 @@ public class BountyAdminCommand extends CommandBase {
             return;
         }
 
-        if(time == null){
+        if(time == null || time < 1){
             handler.getPlugin().getDataManager().getBountyManager().createBountyOn(player.getUniqueId());
         }else {
             final long shouldLastUpto= System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(time);
@@ -53,7 +53,7 @@ public class BountyAdminCommand extends CommandBase {
 
     @SubCommand("remove")
     @Permission("bounty.command.remove")
-    //TODO @Completion({"#players"})
+    @Completion({"#onlinebounty"})
     public void onRemoveCommand(final CommandSender sender, final Player player){
         if(player == null){
             handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.INVALID_PLAYER_ARGS.getResponse());
@@ -70,7 +70,7 @@ public class BountyAdminCommand extends CommandBase {
 
     @SubCommand("bypass")
     @Permission("bounty.command.bypass")
-    //TODO @Completion({"#players"})
+    @Completion({"#players","#boolean"})
     public void onCommandBypass(final CommandSender sender, final Player player, @Optional Boolean status){
         if(player == null){
             handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.INVALID_PLAYER_ARGS.getResponse());
@@ -118,8 +118,9 @@ public class BountyAdminCommand extends CommandBase {
 
     @SubCommand("set")
     @Permission("bounty.command.set")
+    @Completion({"#players","#range"})
     public void onCommandSet(final CommandSender sender, final Player player, final Integer kills){
-        if(kills == null){
+        if(kills == null || kills < 1){
             handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.INVALID_ARGS.getResponse());
             return;
         }
@@ -140,6 +141,7 @@ public class BountyAdminCommand extends CommandBase {
 
     @SubCommand("stats")
     @Permission("bounty.command.stats")
+    @Completion({"#players","#stat","#range"})
     public void onCommandStats(final CommandSender sender, final Player player, String stats, @Optional Integer value){
         if(stats == null){
             handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.INVALID_ARGS.getResponse());
@@ -154,7 +156,7 @@ public class BountyAdminCommand extends CommandBase {
         switch (stats.toUpperCase()){
             case "BKILL":
             case "BOUNTYKILL":
-                if(value == null){
+                if(value == null || value < 0){
                     handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.INVALID_ARGS.getResponse());
                     return;
                 }
@@ -169,7 +171,7 @@ public class BountyAdminCommand extends CommandBase {
                 break;
 
             case "KILL":
-                if(value == null){
+                if(value == null || value < 0){
                     handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.INVALID_ARGS.getResponse());
                     return;
                 }
@@ -184,7 +186,7 @@ public class BountyAdminCommand extends CommandBase {
                 break;
 
             case "DEATH":
-                if(value == null){
+                if(value == null || value < 0){
                     handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.INVALID_ARGS.getResponse());
                     return;
                 }

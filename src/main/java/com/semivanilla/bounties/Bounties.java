@@ -6,6 +6,7 @@ import com.archyx.aureliumskills.api.AureliumAPI;
 import com.semivanilla.bounties.api.BountiesAPI;
 import com.semivanilla.bounties.command.CommandHandler;
 import com.semivanilla.bounties.config.Configuration;
+import com.semivanilla.bounties.gui.core.GUIHandler;
 import com.semivanilla.bounties.hook.HookManager;
 import com.semivanilla.bounties.listener.PlayerConnectionListener;
 import com.semivanilla.bounties.listener.PlayerDeathListener;
@@ -20,7 +21,7 @@ public final class Bounties extends JavaPlugin {
     private PluginDataManager dataManager;
     private HookManager hookManager;
     private CommandHandler commandHandler;
-
+    private GUIHandler guiHandler;
 
     private static BountiesAPI api = null;
 
@@ -32,6 +33,7 @@ public final class Bounties extends JavaPlugin {
         this.dataManager = new PluginDataManager(this);
         this.hookManager = new HookManager(this);
         this.commandHandler = new CommandHandler(this);
+        this.guiHandler = new GUIHandler(this);
 
         if(!configuration.initConfiguration()){
             getLogger().severe("Unable to instantiate configuration. The plugin will be disabled!");
@@ -60,6 +62,7 @@ public final class Bounties extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(this),this);
 
+        commandHandler.registerOthers();
         commandHandler.registerCommands();
         //Load the API Atlast
         api = new PluginAPI(this);
@@ -114,6 +117,8 @@ public final class Bounties extends JavaPlugin {
 
         return api;
     }
-    
 
+    public GUIHandler getGuiHandler() {
+        return guiHandler;
+    }
 }
