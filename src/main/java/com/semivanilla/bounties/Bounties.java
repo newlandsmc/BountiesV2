@@ -4,6 +4,7 @@ package com.semivanilla.bounties;
 import com.archyx.aureliumskills.AureliumSkills;
 import com.archyx.aureliumskills.api.AureliumAPI;
 import com.semivanilla.bounties.api.BountiesAPI;
+import com.semivanilla.bounties.command.CommandHandler;
 import com.semivanilla.bounties.config.Configuration;
 import com.semivanilla.bounties.hook.HookManager;
 import com.semivanilla.bounties.listener.PlayerConnectionListener;
@@ -18,6 +19,7 @@ public final class Bounties extends JavaPlugin {
     private DatabaseHandler databaseHandler;
     private PluginDataManager dataManager;
     private HookManager hookManager;
+    private CommandHandler commandHandler;
 
 
     private static BountiesAPI api = null;
@@ -29,6 +31,7 @@ public final class Bounties extends JavaPlugin {
         this.databaseHandler = new DatabaseHandler(this);
         this.dataManager = new PluginDataManager(this);
         this.hookManager = new HookManager(this);
+        this.commandHandler = new CommandHandler(this);
 
         if(!configuration.initConfiguration()){
             getLogger().severe("Unable to instantiate configuration. The plugin will be disabled!");
@@ -56,9 +59,28 @@ public final class Bounties extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(this),this);
+
+        commandHandler.registerCommands();
         //Load the API Atlast
         api = new PluginAPI(this);
 
+    }
+
+    public void reloadPlugin(){
+        if(!configuration.initConfiguration()){
+            getLogger().severe("Unable to instantiate configuration. The plugin will be disabled!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        configuration.loadConfiguration();
+
+        hookManager.initHooks();
+        if(!hookManager.getXPImpl().hookWithAPI()){
+            getLogger().severe("Unable to connect properly with XP Provider!, the plugin will be disabled");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
     }
 
     @Override

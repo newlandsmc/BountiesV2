@@ -51,6 +51,7 @@ public final class Configuration {
         this.XPForNonBountyPlayer = this.configuration.getInt("rewards.reward-for-killing-non-bounty");
 
         this.bountyKillMap.clear();
+        this.bountyKillReward.clear();
         this.configuration.getConfigurationSection("rewards.bounty-rewards").getKeys(false).forEach((kills) -> {
             bountyKillReward.put(Integer.parseInt(kills),configuration.getInt("rewards.bounty-rewards."+kills));
         });

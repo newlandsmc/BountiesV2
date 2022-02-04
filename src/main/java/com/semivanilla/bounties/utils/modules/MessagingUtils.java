@@ -6,6 +6,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -29,6 +30,14 @@ public final class MessagingUtils {
 
     public void sendTo(@NotNull final Player player, String message){
         audiences.player(player).sendMessage(MessageFormatter.transform(message));
+    }
+
+    public void sendTo(@NotNull final CommandSender sender, String message){
+        audiences.sender(sender).sendMessage(MessageFormatter.transform(message));
+    }
+
+    public void sendTo(@NotNull final CommandSender sender, Component message){
+        audiences.sender(sender).sendMessage(message);
     }
 
     public void sendTo(@NotNull final Player player, String message, InternalPlaceholders... placeholders){

@@ -52,6 +52,7 @@ public final class PlayerDeathListener implements Listener {
         final Player killer = event.getEntity().getKiller();
         final UUID killerUID = event.getEntity().getKiller().getUniqueId();
 
+        //If the player is combat logged...load the data of the player and then add the death and save again
         if(isDeadCombatLogged){
             plugin.getDatabaseHandler().getDataStorage().getOrRegister(deadPlayerUID).thenAccept((stats) -> {
                stats.addDeath();

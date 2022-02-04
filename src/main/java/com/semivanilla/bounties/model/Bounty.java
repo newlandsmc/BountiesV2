@@ -22,7 +22,7 @@ public final class Bounty {
     public Bounty(UUID playerUUID, long remainingTime) {
         this.playerUUID = playerUUID;
         this.remainingTime = remainingTime;
-        this.killed = 0;
+        this.killed = 1;
     }
 
     public UUID getPlayerUUID() {

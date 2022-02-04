@@ -52,7 +52,6 @@ public final class BountyManager {
         final Bounty bounty = bountiesHashMap.get(deadPlayer);
         unloadBounty(deadPlayer);
         plugin.getDatabaseHandler().getDataStorage().removeABounty(deadPlayer);
-        //TODO Bounty killed message
     }
 
     public void updateKillOn(@NotNull UUID killer){
@@ -61,7 +60,6 @@ public final class BountyManager {
 
         final Bounty bounty = bountiesHashMap.get(killer);
         bounty.addKill(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(plugin.getConfiguration().getBountyDuration()));
-        //TODO Add Messages
         plugin.getDatabaseHandler().getDataStorage().saveBountyAsync(bounty);
     }
 
