@@ -4,6 +4,7 @@ import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -102,20 +103,39 @@ public final class Configuration {
         return messageDelay;
     }
 
-    public List<String> getMessageBroadcastNewBounty() {
-        return messageBroadcastNewBounty;
-    }
-
     public String getFormattedPlaceholderPlayersOnline(long onlineCount) {
         return this.formattedPlaceholderPlayersOnline.replace("%online%",String.valueOf(onlineCount));
     }
 
-    public List<String> getMessageBroadcastBountyGrows() {
-        return messageBroadcastBountyGrows;
+    public List<String> getMessageBroadcastNewBounty(String killerName, String deadPlayerName) {
+        final List<String> placeholderParsedMessage = new ArrayList<>();
+        this.messageBroadcastNewBounty.forEach(line ->{
+            String message = line;
+            message = message.replace("%killer%",killerName).replace("%dead_player%",deadPlayerName);
+            placeholderParsedMessage.add(message);
+        });
+        return placeholderParsedMessage;
     }
 
-    public List<String> getMessageBroadcastBountyClaimed() {
-        return messageBroadcastBountyClaimed;
+    public List<String> getMessageBroadcastBountyGrows(String killerName, String deadPlayerName) {
+        final List<String> placeholderParsedMessage = new ArrayList<>();
+        this.messageBroadcastBountyGrows.forEach(line -> {
+            String message = line;
+            message = message.replace("%killer%",killerName).replace("%dead_player%",deadPlayerName);
+            placeholderParsedMessage.add(message);
+        });
+
+        return placeholderParsedMessage;
+    }
+
+    public List<String> getMessageBroadcastBountyClaimed(String killerName, String deadPlayerName) {
+        final List<String> placeholderParsedMessage = new ArrayList<>();
+        this.messageBroadcastBountyClaimed.forEach(line -> {
+            String message = line;
+            message = message.replace("%killer%",killerName).replace("%dead_player%",deadPlayerName);
+            placeholderParsedMessage.add(message);
+        });
+        return placeholderParsedMessage;
     }
 
     public List<String> getMessagePlayerSpamKiller() {

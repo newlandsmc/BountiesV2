@@ -59,4 +59,8 @@ public final class PlayerStatisticsManager {
 
         statisticsHashMap.get(uid).addKill();
     }
+
+    public HashMap<UUID, PlayerStatistics> getStatisticsHashMap() {
+        return statisticsHashMap;
+    }
 }

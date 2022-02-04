@@ -2,7 +2,7 @@ package com.semivanilla.bounties.hook;
 
 import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.hook.placeholderAPI.PlaceholderRegister;
-import com.semivanilla.bounties.hook.skills.AureliumSkills;
+import com.semivanilla.bounties.hook.skills.AureliumXPProvider;
 import com.semivanilla.bounties.reward.VanillaSkills;
 
 public final class HookManager {
@@ -19,7 +19,7 @@ public final class HookManager {
         //Skills Hook
         if(plugin.getConfiguration().isUseFightingXP()){
             if(plugin.getServer().getPluginManager().isPluginEnabled("AureliumSkills"))
-                XPImpl = new AureliumSkills(this);
+                XPImpl = new AureliumXPProvider(this);
             else {
                 plugin.getLogger().warning("Configuration provided to use Aurelium Skills As XP Provider, but the plugin seems to be disabled!");
                 XPImpl = new VanillaSkills(this);

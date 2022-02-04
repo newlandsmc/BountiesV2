@@ -1,5 +1,8 @@
 package com.semivanilla.bounties;
 
+
+import com.archyx.aureliumskills.AureliumSkills;
+import com.archyx.aureliumskills.api.AureliumAPI;
 import com.semivanilla.bounties.api.BountiesAPI;
 import com.semivanilla.bounties.config.Configuration;
 import com.semivanilla.bounties.hook.HookManager;
@@ -51,11 +54,11 @@ public final class Bounties extends JavaPlugin {
             return;
         }
 
-
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(this),this);
         //Load the API Atlast
         api = new PluginAPI(this);
+
     }
 
     @Override

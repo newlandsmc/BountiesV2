@@ -38,7 +38,7 @@ public final class PlayerDeathListener implements Listener {
         if(event.getEntity().hasMetadata("NPC") && NPCManager.getNPCRegistry().getNPC(event.getEntity()).hasTrait(CombatNPCTrait.class)){
                 CombatNPCTrait trait = NPCManager.getNPCRegistry().getNPC(event.getEntity()).getTraitNullable(CombatNPCTrait.class);
                 deadPlayerUID = trait.getUuid();
-                deadName = trait.getName();
+                deadName = trait.getRawName();
                 isDeadCombatLogged = true;
         } else {
             deadPlayerUID = event.getEntity().getUniqueId();
@@ -73,7 +73,7 @@ public final class PlayerDeathListener implements Listener {
                     new InternalPlaceholders("%killer%",killer.getName()));
 
             plugin.getUtilityManager().getMessagingUtils().sendInInterval(killer
-                    ,plugin.getConfiguration().getMessagePlayerSpamVictim(),
+                    ,plugin.getConfiguration().getMessagePlayerSpamKiller(),
                     plugin.getConfiguration().getMessageDelay(),
                     new InternalPlaceholders("%dead_player%",deadName),
                     new InternalPlaceholders("%killer%",killer.getName()));
@@ -119,10 +119,8 @@ public final class PlayerDeathListener implements Listener {
 
             //Remove the bounty on his head
             plugin.getDataManager().getBountyManager().clearBountyOn(deadPlayerUID);
-            plugin.getUtilityManager().getMessagingUtils().broadcastAsync(plugin.getConfiguration().getMessageBroadcastBountyClaimed(),
-                    plugin.getConfiguration().getMessageDelay(),
-                    new InternalPlaceholders("%dead_player%",deadName),
-                    new InternalPlaceholders("%killer%",killer.getName()));
+            plugin.getUtilityManager().getMessagingUtils().queueBroadcast(plugin.getConfiguration().getMessageBroadcastBountyClaimed(killer.getName(),deadName),
+                    plugin.getConfiguration().getMessageDelay());
 
         }else {
             //The dead player is not a bounty, But there are still rewards.
@@ -145,17 +143,13 @@ public final class PlayerDeathListener implements Listener {
         // and if the killer is a bounty, that means he killed another non- bounty player, so update kill on him
         if(plugin.getDataManager().getBountyManager().isBounty(killerUID)){
             plugin.getDataManager().getBountyManager().updateKillOn(killerUID);
-            plugin.getUtilityManager().getMessagingUtils().broadcastAsync(plugin.getConfiguration().getMessageBroadcastBountyGrows(),
-                    plugin.getConfiguration().getMessageDelay(),
-                    new InternalPlaceholders("%dead_player%",deadName),
-                    new InternalPlaceholders("%killer%",killer.getName()));
+            plugin.getUtilityManager().getMessagingUtils().queueBroadcast(plugin.getConfiguration().getMessageBroadcastBountyGrows(killer.getName(), deadName),
+                    plugin.getConfiguration().getMessageDelay());
         }else {
             //If the killer is not a bounty, that means his head should have a bounty
             plugin.getDataManager().getBountyManager().createBountyOn(killerUID);
-            plugin.getUtilityManager().getMessagingUtils().broadcastAsync(plugin.getConfiguration().getMessageBroadcastNewBounty(),
-                    plugin.getConfiguration().getMessageDelay(),
-                    new InternalPlaceholders("%dead_player%",deadName),
-                    new InternalPlaceholders("%killer%",killer.getName()));
+            plugin.getUtilityManager().getMessagingUtils().queueBroadcast(plugin.getConfiguration().getMessageBroadcastNewBounty(killer.getName(), deadName),
+                    plugin.getConfiguration().getMessageDelay());
 
         }
 
