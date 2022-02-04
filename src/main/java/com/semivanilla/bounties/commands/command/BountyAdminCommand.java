@@ -1,7 +1,7 @@
-package com.semivanilla.bounties.command.command;
+package com.semivanilla.bounties.commands.command;
 
-import com.semivanilla.bounties.command.CommandHandler;
-import com.semivanilla.bounties.command.DefaultResponse;
+import com.semivanilla.bounties.commands.CommandHandler;
+import com.semivanilla.bounties.enums.DefaultResponse;
 import me.mattstudios.mf.annotations.*;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.command.CommandSender;

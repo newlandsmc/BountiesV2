@@ -1,4 +1,4 @@
-package com.semivanilla.bounties.command;
+package com.semivanilla.bounties.enums;
 
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import net.kyori.adventure.text.Component;

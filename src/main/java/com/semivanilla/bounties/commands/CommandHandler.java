@@ -1,10 +1,8 @@
-package com.semivanilla.bounties.command;
+package com.semivanilla.bounties.commands;
 
 import com.semivanilla.bounties.Bounties;
-import com.semivanilla.bounties.command.command.BountyAdminCommand;
-import com.semivanilla.bounties.command.command.BountyCommand;
-import com.semivanilla.bounties.utils.modules.MessageFormatter;
-import me.clip.placeholderapi.libs.kyori.adventure.text.Component;
+import com.semivanilla.bounties.commands.command.BountyAdminCommand;
+import com.semivanilla.bounties.commands.command.BountyCommand;
 import me.mattstudios.mf.base.CommandManager;
 import me.mattstudios.mf.base.components.CompletionResolver;
 

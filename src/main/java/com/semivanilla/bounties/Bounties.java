@@ -1,10 +1,8 @@
 package com.semivanilla.bounties;
 
 
-import com.archyx.aureliumskills.AureliumSkills;
-import com.archyx.aureliumskills.api.AureliumAPI;
 import com.semivanilla.bounties.api.BountiesAPI;
-import com.semivanilla.bounties.command.CommandHandler;
+import com.semivanilla.bounties.commands.CommandHandler;
 import com.semivanilla.bounties.config.Configuration;
 import com.semivanilla.bounties.gui.core.GUIHandler;
 import com.semivanilla.bounties.hook.HookManager;

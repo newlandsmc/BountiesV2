@@ -1,7 +1,6 @@
-package com.semivanilla.bounties.command.command;
+package com.semivanilla.bounties.commands.command;
 
-import com.semivanilla.bounties.command.CommandHandler;
-import com.semivanilla.bounties.utils.modules.MessagingUtils;
+import com.semivanilla.bounties.commands.CommandHandler;
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Default;
 import me.mattstudios.mf.annotations.SubCommand;
