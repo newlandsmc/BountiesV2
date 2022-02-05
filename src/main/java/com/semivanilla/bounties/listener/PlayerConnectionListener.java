@@ -78,6 +78,7 @@ public final class PlayerConnectionListener implements Listener {
         }
 
         plugin.getDatabaseHandler().getDataStorage().savePlayerStatisticsAsync(plugin.getDataManager().getStatisticsManager().getPlayerStatistics(player));
+        plugin.getDataManager().getStatisticsManager().unloadPlayerStatistics(player.getUniqueId());
     }
 
 }

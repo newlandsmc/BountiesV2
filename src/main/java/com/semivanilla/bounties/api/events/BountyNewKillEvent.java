@@ -1,19 +1,19 @@
 package com.semivanilla.bounties.api.events;
 
-import com.semivanilla.bounties.model.Bounty;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public final class PlayerNewBountyEvent extends Event{
+public class BountyNewKillEvent extends Event {
 
-    private final Bounty bounty;
+    private final UUID playerUID;
+    private final int updatedKill;
 
-    public PlayerNewBountyEvent(Bounty bounty) {
-        this.bounty = bounty;
+    public BountyNewKillEvent(UUID playerUID, int updatedKill) {
+        this.playerUID = playerUID;
+        this.updatedKill = updatedKill;
     }
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
@@ -28,7 +28,11 @@ public final class PlayerNewBountyEvent extends Event{
         return HANDLERS_LIST;
     }
 
-    public Bounty getBounty() {
-        return bounty;
+    public UUID getPlayerUID() {
+        return playerUID;
+    }
+
+    public int getUpdatedKill() {
+        return updatedKill;
     }
 }

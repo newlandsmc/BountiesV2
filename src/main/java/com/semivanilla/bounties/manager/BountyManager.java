@@ -1,6 +1,9 @@
 package com.semivanilla.bounties.manager;
 
 import com.semivanilla.bounties.Bounties;
+import com.semivanilla.bounties.api.events.BountyNewKillEvent;
+import com.semivanilla.bounties.api.events.PlayerBountyClearEvent;
+import com.semivanilla.bounties.api.events.PlayerNewBountyEvent;
 import com.semivanilla.bounties.model.Bounty;
 import com.semivanilla.bounties.task.BountyExpiryTask;
 import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
@@ -46,12 +49,16 @@ public final class BountyManager {
         final Bounty bounty = new Bounty(killer,shouldLastUpto,1);
         bountiesHashMap.put(killer,bounty);
         plugin.getDatabaseHandler().getDataStorage().registerNewBounty(bounty);
+        final PlayerNewBountyEvent event = new PlayerNewBountyEvent(bounty);
+        plugin.getServer().getPluginManager().callEvent(event);
     }
 
     public void clearBountyOn(@NotNull UUID deadPlayer){
         final Bounty bounty = bountiesHashMap.get(deadPlayer);
         unloadBounty(deadPlayer);
         plugin.getDatabaseHandler().getDataStorage().removeABounty(deadPlayer);
+        final PlayerBountyClearEvent event = new PlayerBountyClearEvent(deadPlayer);
+        plugin.getServer().getPluginManager().callEvent(event);
     }
 
     public void updateKillOn(@NotNull UUID killer){
@@ -61,6 +68,8 @@ public final class BountyManager {
         final Bounty bounty = bountiesHashMap.get(killer);
         bounty.addKill(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(plugin.getConfiguration().getBountyDuration()));
         plugin.getDatabaseHandler().getDataStorage().saveBountyAsync(bounty);
+        final BountyNewKillEvent event = new BountyNewKillEvent(killer,bounty.getKilled());
+        plugin.getServer().getPluginManager().callEvent(event);
     }
 
     public int getCurrentBountySize(){
