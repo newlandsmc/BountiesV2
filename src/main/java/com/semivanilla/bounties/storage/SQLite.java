@@ -90,7 +90,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
         try {
             if(!sqlConnection.isClosed()) {
                 databaseHandler.getPlugin().getLogger().info("Starting to save data!");
-                databaseHandler.getPlugin().getDataManager().getAllBounties().forEachRemaining(this::saveBountySync);
+                databaseHandler.getPlugin().getDataManager().getOnlineBounties().forEachRemaining(this::saveBountySync);
                 databaseHandler.getPlugin().getDataManager().getStatisticsManager().getAllLoadedPlayerStats().forEachRemaining(this::savePlayerStatisticsSync);
                 databaseHandler.getPlugin().getLogger().info("Datasaving has been completed...Preparing to shut down database");
                 sqlConnection.close();
@@ -265,6 +265,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
                    ps.setInt(2,bounty.getKilled());
                    ps.setString(3,bounty.getPlayerUUID().toString());
 
+
                    ps.executeUpdate();
                    ps.close();
                }catch (Exception e){
@@ -276,51 +277,43 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
 
     @Override
     public void saveBountySync(@NotNull Bounty bounty) {
-        databaseHandler.getPlugin().getServer().getScheduler().runTask(databaseHandler.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ? WHERE `pl_id` = ?;");
-                    if(ps == null)
-                        return;
+        try {
+            PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+BOUNTY_TABLE_NAME+" SET `time` = ?, `kills` = ? WHERE `pl_id` = ?;");
+            if(ps == null)
+                return;
 
-                    ps.setLong(1,bounty.getRemainingTime());
-                    ps.setInt(2,bounty.getKilled());
-                    ps.setString(3,bounty.getPlayerUUID().toString());
+            ps.setLong(1,bounty.getRemainingTime());
+            ps.setInt(2,bounty.getKilled());
+            ps.setString(3,bounty.getPlayerUUID().toString());
 
-                    ps.executeUpdate();
-                    ps.close();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
+
+
+            ps.executeUpdate();
+            ps.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void savePlayerStatisticsSync(@NotNull PlayerStatistics statistics) {
-        databaseHandler.getPlugin().getServer().getScheduler().runTask(databaseHandler.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                try {
+        try {
+            PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
 
-                    PreparedStatement ps = sqlConnection.prepareStatement("UPDATE "+PLAYER_DATA_TABLE_NAME+" SET `bounty_kills` = ?, `kills` = ?, `deaths` = ? WHERE `pl_id` = ?;");
+            if(ps == null)
+                return;
 
-                    if(ps == null)
-                        return;
+            ps.setInt(1,statistics.getBountyKills());
+            ps.setInt(2,statistics.getKills());
+            ps.setInt(3,statistics.getDeaths());
+            ps.setString(4,statistics.getPlayerID().toString());
 
-                    ps.setInt(1,statistics.getBountyKills());
-                    ps.setInt(2,statistics.getKills());
-                    ps.setInt(3,statistics.getDeaths());
-                    ps.setString(4,statistics.getPlayerID().toString());
 
-                    ps.executeUpdate();
-                    ps.close();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
+            ps.executeUpdate();
+            ps.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -339,6 +332,7 @@ public final class SQLite extends AbstractSQL implements DataStorageImpl {
                     ps.setInt(2,statistics.getKills());
                     ps.setInt(3,statistics.getDeaths());
                     ps.setString(4,statistics.getPlayerID().toString());
+
 
                     ps.executeUpdate();
                     ps.close();

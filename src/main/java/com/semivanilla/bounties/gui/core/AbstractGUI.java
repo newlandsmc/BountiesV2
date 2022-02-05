@@ -1,6 +1,13 @@
 package com.semivanilla.bounties.gui.core;
 
-import me.mattstudios.mfgui.gui.guis.BaseGui;
+import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
+import com.semivanilla.bounties.utils.modules.MessageFormatter;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.guis.BaseGui;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.PaginatedGui;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,16 +22,15 @@ public abstract class AbstractGUI {
     }
 
     public void openMenu(@NotNull final Player player){
-        prepareGUI(player).thenAccept(gui -> {
-           handler.getPlugin().getServer().getScheduler().runTask(handler.getPlugin(), new Runnable() {
-               @Override
-               public void run() {
+
+        prepareGUI(player).thenAccept((gui) -> {
+            handler.getPlugin().getServer().getScheduler().runTask(handler.getPlugin(), new Runnable() {
+                public void run() {
                     gui.open(player);
-               }
-           });
+                }
+            });
         });
     }
-
     protected abstract CompletableFuture<BaseGui> prepareGUI(final Player player);
 
     public abstract String name();

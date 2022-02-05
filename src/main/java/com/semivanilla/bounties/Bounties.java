@@ -68,12 +68,13 @@ public final class Bounties extends JavaPlugin {
     }
 
     public void reloadPlugin(){
+
+
         if(!configuration.initConfiguration()){
             getLogger().severe("Unable to instantiate configuration. The plugin will be disabled!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
         configuration.loadConfiguration();
 
         hookManager.initHooks();

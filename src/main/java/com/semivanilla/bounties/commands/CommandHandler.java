@@ -24,7 +24,6 @@ public class CommandHandler {
         put("/bountyadmin create [player]","Creates a bounty on the specified player with the default time limit");
         put("/bountyadmin create [player] [mins]","Creates a bounty on the specified player with the specified time limit");
         put("/bountyadmin remove [player]","Removes the bounty of a player if the player is a bounty.");
-        put("/bountyadmin bypass [player]","Adds/Removes the player on the player exempt list. Once added, they won't be bounty-ed nor will release a bounty until the server restart");
         put("/bountyadmin bypass [player] true","Adds the player on to the player exempt list");
         put("/bountyadmin bypass [player] false","Removes the player on to the player exempt list");
         put("/bountyadmin set [player] [kills]","Sets the amount of kills a bounty-ed player have");

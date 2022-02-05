@@ -1,13 +1,14 @@
 package com.semivanilla.bounties.config;
 
 import com.semivanilla.bounties.Bounties;
+import com.semivanilla.bounties.gui.core.buttons.Buttons;
+import com.semivanilla.bounties.gui.core.buttons.Fillers;
+import com.semivanilla.bounties.utils.modules.ItemUtils;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public final class Configuration {
 
@@ -31,12 +32,20 @@ public final class Configuration {
     private List<String> messageHelpHeader,messageHelpFooter;
     private String messageHelpContent;
 
+    private boolean showNextAndPreOnlyNeeded;
+    private String bountyMenuName;
+    private int bountyMenuRows;
+    private Buttons bountyMenuPreviousButtons, bountyMenuNextButtons, bountyMenuBountyButton;
+    private final List<Fillers> bountyMenuFillers;
+
     public Configuration(Bounties plugin) {
         this.plugin = plugin;
+        this.bountyMenuFillers = new ArrayList<>();
     }
 
     public boolean initConfiguration(){
         this.plugin.saveDefaultConfig();
+        this.plugin.reloadConfig();
         this.configuration = this.plugin.getConfig();
 
         if(configuration == null) return false;
@@ -72,8 +81,22 @@ public final class Configuration {
         this.messagePlayerSpamVictim = this.configuration.getStringList("messages.already-killed-before.victim");
 
         this.messageHelpHeader = this.configuration.getStringList("messages.help-message.header");
-        this.messageHelpContent = this.configuration.getString("messages.help-message.footer");
-        this.messageHelpFooter = this.configuration.getStringList("messages.help-message.command-description");
+        this.messageHelpContent = this.configuration.getString("messages.help-message.command-description");
+        this.messageHelpFooter = this.configuration.getStringList("messages.help-message.footer");
+
+        this.showNextAndPreOnlyNeeded = this.configuration.getBoolean("gui.bounty-menu.show-next-and-pre-if-only-needed");
+        this.bountyMenuName = this.configuration.getString("gui.bounty-menu.name");
+        this.bountyMenuRows = this.configuration.getInt("gui.bounty-menu.row");
+        this.bountyMenuPreviousButtons = Buttons.buildButtons(Objects.requireNonNull(this.configuration.getConfigurationSection("gui.bounty-menu.buttons.pre-button")));
+        this.bountyMenuNextButtons = Buttons.buildButtons(Objects.requireNonNull(this.configuration.getConfigurationSection("gui.bounty-menu.buttons.next-button")));
+        this.bountyMenuBountyButton = Buttons.buildButtons(Objects.requireNonNull(this.configuration.getConfigurationSection("gui.bounty-menu.buttons.bounty-button")));
+        this.bountyMenuFillers.clear();
+        this.configuration.getConfigurationSection("gui.bounty-menu.filler").getKeys(false).forEach(item -> {
+            final ItemStack fillerMaterial = ItemUtils.getMaterialFrom(item);
+            final List<String> fillerList = this.configuration.getStringList("gui.bounty-menu.filler."+item);
+            bountyMenuFillers.add(Fillers.buildFrom(fillerMaterial,fillerList));
+        });
+
     }
 
     public long getBountyDuration() {
@@ -164,5 +187,33 @@ public final class Configuration {
 
     public String getMessageHelpContent(String command,String desc) {
         return messageHelpContent.replace("%command%",command).replace("%description%",desc);
+    }
+
+    public boolean isShowNextAndPreOnlyNeeded() {
+        return showNextAndPreOnlyNeeded;
+    }
+
+    public String getBountyMenuName() {
+        return bountyMenuName;
+    }
+
+    public int getBountyMenuRows() {
+        return bountyMenuRows;
+    }
+
+    public Buttons getBountyMenuPreviousButtons() {
+        return bountyMenuPreviousButtons;
+    }
+
+    public Buttons getBountyMenuNextButtons() {
+        return bountyMenuNextButtons;
+    }
+
+    public List<Fillers> getBountyMenuFillers() {
+        return bountyMenuFillers;
+    }
+
+    public Buttons getBountyMenuBountyButton() {
+        return bountyMenuBountyButton;
     }
 }

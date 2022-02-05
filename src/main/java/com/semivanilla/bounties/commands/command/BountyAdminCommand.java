@@ -2,6 +2,7 @@ package com.semivanilla.bounties.commands.command;
 
 import com.semivanilla.bounties.commands.CommandHandler;
 import com.semivanilla.bounties.enums.DefaultResponse;
+import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import me.mattstudios.mf.annotations.*;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.command.CommandSender;
@@ -66,12 +67,13 @@ public class BountyAdminCommand extends CommandBase {
         }
 
         handler.getPlugin().getDataManager().getBountyManager().clearBountyOn(player.getUniqueId());
+        handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_REMOVED_BOUNTY.getResponse());
     }
 
     @SubCommand("bypass")
     @Permission("bounty.command.bypass")
     @Completion({"#players","#boolean"})
-    public void onCommandBypass(final CommandSender sender, final Player player, @Optional Boolean status){
+    public void onCommandBypass(final CommandSender sender, final Player player, Boolean status){
         if(player == null){
             handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.INVALID_PLAYER_ARGS.getResponse());
             return;
@@ -82,30 +84,20 @@ public class BountyAdminCommand extends CommandBase {
             return;
         }
 
-        if(status == null){
-            if(handler.getPlugin().getDataManager().isPlayerExempted(player.getUniqueId())) {
-                handler.getPlugin().getDataManager().addToExemptedList(player);
-                handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_EXEMPTED_FROM_BOUNTY.getResponse());
-            }else {
-                handler.getPlugin().getDataManager().removeFromExemptedList(player);
-                handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_REMOVED_FROM_EXEMPT.getResponse());
+        if(status){
+            if(handler.getPlugin().getDataManager().isPlayerExempted(player.getUniqueId())){
+                handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.PLAYER_ALREADY_EXEMPTED.getResponse());
+                return;
             }
+            handler.getPlugin().getDataManager().addToExemptedList(player);
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_EXEMPTED_FROM_BOUNTY.getResponse());
         }else {
-            if(status){
-                if(handler.getPlugin().getDataManager().isPlayerExempted(player.getUniqueId())){
-                    handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.PLAYER_ALREADY_EXEMPTED.getResponse());
-                    return;
-                }
-                handler.getPlugin().getDataManager().addToExemptedList(player);
-                handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_EXEMPTED_FROM_BOUNTY.getResponse());
-            }else {
-                if(!handler.getPlugin().getDataManager().isPlayerExempted(player.getUniqueId())){
-                    handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.PLAYER_ALREADY_NOT_EXEMPTED.getResponse());
-                    return;
-                }
-                handler.getPlugin().getDataManager().removeFromExemptedList(player);
-                handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_REMOVED_FROM_EXEMPT.getResponse());
+            if(!handler.getPlugin().getDataManager().isPlayerExempted(player.getUniqueId())){
+                handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.PLAYER_ALREADY_NOT_EXEMPTED.getResponse());
+                return;
             }
+            handler.getPlugin().getDataManager().removeFromExemptedList(player);
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_REMOVED_FROM_EXEMPT.getResponse());
         }
     }
 

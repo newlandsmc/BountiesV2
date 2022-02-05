@@ -10,6 +10,7 @@ public final class UtilityManager {
 
     private final MessagingUtils messagingUtils;
 
+
     public UtilityManager(Bounties plugin) {
         this.plugin = plugin;
         this.messagingUtils = new MessagingUtils(this);
