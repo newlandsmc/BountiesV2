@@ -24,6 +24,9 @@ public final class Configuration {
     private final HashMap<Integer,Integer> bountyKillReward = new HashMap<>();
     private final TreeSet<Integer> bountyKillMap = new TreeSet<>();
 
+    private final HashMap<Integer, Integer> bountyKillRandomLocRadius = new HashMap<>();
+    private final TreeSet<Integer> bountyKillRandomLocMap = new TreeSet<>();
+
     private String formattedPlaceholderBountyTag,formattedPlaceholderZeroOnline,formattedPlaceholderPlayersOnline;
 
     private int messageDelay;
@@ -35,7 +38,7 @@ public final class Configuration {
     private boolean showNextAndPreOnlyNeeded;
     private String bountyMenuName;
     private int bountyMenuRows;
-    private Buttons bountyMenuPreviousButtons, bountyMenuNextButtons, bountyMenuBountyButton;
+    private Buttons bountyMenuPreviousButtons, bountyMenuNextButtons, bountyMenuBountyButton,bountyMenuStatsButton;
     private final List<Fillers> bountyMenuFillers;
 
     public Configuration(Bounties plugin) {
@@ -69,6 +72,13 @@ public final class Configuration {
         });
         this.bountyKillMap.addAll(bountyKillReward.keySet().stream().toList());
 
+        this.bountyKillRandomLocMap.clear();
+        this.bountyKillRandomLocRadius.clear();
+        this.configuration.getConfigurationSection("rand-location-radius-for-kills").getKeys(false).forEach((kills) -> {
+            bountyKillRandomLocRadius.put(Integer.parseInt(kills),configuration.getInt("rand-location-radius-for-kills."+kills));
+        });
+        this.bountyKillRandomLocMap.addAll(bountyKillRandomLocRadius.keySet().stream().toList());
+
         this.formattedPlaceholderBountyTag = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-tag-for-bounty"));
         this.formattedPlaceholderZeroOnline = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-online-count.zero-online"));
         this.formattedPlaceholderPlayersOnline = MessageFormatter.colorizeLegacy(this.configuration.getString("hook.placeholder-api.formatted-online-count.online"));
@@ -90,6 +100,7 @@ public final class Configuration {
         this.bountyMenuPreviousButtons = Buttons.buildButtons(Objects.requireNonNull(this.configuration.getConfigurationSection("gui.bounty-menu.buttons.pre-button")));
         this.bountyMenuNextButtons = Buttons.buildButtons(Objects.requireNonNull(this.configuration.getConfigurationSection("gui.bounty-menu.buttons.next-button")));
         this.bountyMenuBountyButton = Buttons.buildButtons(Objects.requireNonNull(this.configuration.getConfigurationSection("gui.bounty-menu.buttons.bounty-button")));
+        this.bountyMenuStatsButton = Buttons.buildButtons(Objects.requireNonNull(this.configuration.getConfigurationSection("gui.bounty-menu.buttons.info-button")));
         this.bountyMenuFillers.clear();
         this.configuration.getConfigurationSection("gui.bounty-menu.filler").getKeys(false).forEach(item -> {
             final ItemStack fillerMaterial = ItemUtils.getMaterialFrom(item);
@@ -120,6 +131,13 @@ public final class Configuration {
             return bountyKillReward.get(kills);
 
         else return bountyKillReward.get(bountyKillMap.lower(kills));
+    }
+
+    public int getRadiusForRandLocOnKills(int kills){
+        if(bountyKillRandomLocRadius.containsKey(kills))
+            return bountyKillRandomLocRadius.get(kills);
+
+        else return bountyKillRandomLocRadius.get(bountyKillRandomLocMap.lower(kills));
     }
 
     public String getFormattedPlaceholderBountyTag() {
@@ -215,5 +233,9 @@ public final class Configuration {
 
     public Buttons getBountyMenuBountyButton() {
         return bountyMenuBountyButton;
+    }
+
+    public Buttons getBountyMenuStatsButton() {
+        return bountyMenuStatsButton;
     }
 }

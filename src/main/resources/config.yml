@@ -8,6 +8,18 @@ tasks-duration:
   player-kill-tag-in-sec: 3600
 ##########################################################################################################################
 ##########################################################################################################################
+##This radius will be used for the placeholder %rand_loc%.
+##For eg:
+##A Bounty with 1 kill will have a random location of 450
+##A Bounty with 2 kill will have a random location of 400
+rand-location-radius-for-kills:
+  1: 450
+  2: 400
+  3: 350
+  4: 250
+  5: 150
+##########################################################################################################################
+##########################################################################################################################
 ##Rewards
 ##This section defines everything related to rewards.
 ##use-fighting-xp -> This section defines whether to use 3rd Party plugins fighting XP (currently Aurelium Skills) or should
@@ -48,21 +60,25 @@ gui:
       info-button:
         item: "PAPER"
         amount: 1
-        name: "<italic:false><yellow>Your Stats"
+        name: "<italic:false><yellow>Your Bounty Statistics"
         slot: 35
         lore:
-          - "<italic:false><gray>"
+          - "<italic:false><white>Bounties Killed <gray>» <yellow>%bkills%"
+          - "<italic:false><white>Non Bounties Killed <gray>» <yellow>%nonbkills%"
+          - "<italic:false><white>PvP Deaths <gray>» <yellow>%deaths%"
+          - "<italic:false><white>KD <gray>» <yellow>%kd%"
       bounty-button:
         item: "PLAYER_HEAD"
         amount: 1
         slot: "1"
         name: "<italic:false><yellow>%name%"
         lore:
-          - "<italic:false><white>Time left <yellow>» %time-left%"
-          - "<italic:false><white>Current Kills <yellow>» %kills%"
+          - "<italic:false><white>Time left <gray>» <yellow>%time-left%"
+          - "<italic:false><white>Current Kills <gray>» <yellow>%kills%"
           - "<italic:false><reset>"
           - "<italic:false><gray>Killing this bounty would worth of"
-          - "<italic:false><gray>%xp% fighting XP"
+          - "<italic:false><gray>%xp% fighting XP. The player is last spotted"
+          - "<italic:false><gray>somewhere near %rand_loc%"
     filler:
       BLACK_STAINED_GLASS_PANE:
         - 27

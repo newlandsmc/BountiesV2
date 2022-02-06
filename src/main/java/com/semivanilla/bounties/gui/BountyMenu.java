@@ -3,6 +3,7 @@ package com.semivanilla.bounties.gui;
 import com.semivanilla.bounties.gui.core.AbstractGUI;
 import com.semivanilla.bounties.gui.core.GUIHandler;
 import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
+import com.semivanilla.bounties.utils.modules.LocationUtils;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.BaseGui;
@@ -73,6 +74,20 @@ public class BountyMenu extends AbstractGUI {
                     gui.setItem(handler.getPlugin().getConfiguration().getBountyMenuNextButtons().getSlot(),nextButton);
                 }
 
+                final GuiItem statsItem = ItemBuilder.from(handler.getPlugin().getConfiguration().getBountyMenuStatsButton().getItemStack())
+                        .name(MessageFormatter.transform(handler.getPlugin().getConfiguration().getBountyMenuStatsButton().getName()))
+                        .amount(handler.getPlugin().getConfiguration().getBountyMenuStatsButton().getAmount())
+                        .lore(MessageFormatter.transform( handler.getPlugin().getConfiguration().getBountyMenuStatsButton().getLore(
+                                new InternalPlaceholders("%bkills%",handler.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getBountyKills()),
+                                new InternalPlaceholders("%nonbkills%",handler.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getKills()),
+                                new InternalPlaceholders("%deaths%",handler.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getDeaths()),
+                                new InternalPlaceholders("%kd%",handler.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player).getKDRatio())
+                                ))
+                        )
+                        .asGuiItem();
+
+
+                gui.setItem(handler.getPlugin().getConfiguration().getBountyMenuStatsButton().getSlot(),statsItem);
                 handler.getPlugin().getDataManager().getOnlineBounties().forEachRemaining(bounty -> {
                     final InternalPlaceholders namePlaceholders = new InternalPlaceholders("%name%",bounty.getPlayer().get().getName());
                     final GuiItem item = ItemBuilder.skull()
@@ -83,6 +98,7 @@ public class BountyMenu extends AbstractGUI {
                                             new InternalPlaceholders("%time-left%",bounty.getFormattedRemaining()),
                                             new InternalPlaceholders("%kills%",bounty.getKilled()),
                                             new InternalPlaceholders("%xp%",handler.getPlugin().getConfiguration().getXPForKills(bounty.getKilled())),
+                                            new InternalPlaceholders("%rand_loc%", LocationUtils.getRandomLocationFromARadius(bounty.getPlayer().get().getLocation(),handler.getPlugin().getConfiguration().getRadiusForRandLocOnKills(bounty.getKilled()))),
                                             namePlaceholders
                                     ))
                             )
@@ -98,6 +114,6 @@ public class BountyMenu extends AbstractGUI {
 
     @Override
     public String name() {
-        return null;
+        return "Bounty Menu";
     }
 }
