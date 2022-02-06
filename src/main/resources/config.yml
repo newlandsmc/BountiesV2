@@ -42,7 +42,7 @@ rewards:
 gui:
   bounty-menu:
     show-next-and-pre-if-only-needed: true
-    name: "<red>Bounties"
+    name: "Bounties"
     row: 3
     buttons:
       next-button:
@@ -76,9 +76,8 @@ gui:
           - "<italic:false><white>Time left <gray>» <yellow>%time-left%"
           - "<italic:false><white>Current Kills <gray>» <yellow>%kills%"
           - "<italic:false><reset>"
-          - "<italic:false><gray>Killing this bounty would worth of"
-          - "<italic:false><gray>%xp% fighting XP. The player is last spotted"
-          - "<italic:false><gray>somewhere near %rand_loc%"
+          - "<italic:false><gray>Killing this bounty is worth"
+          - "<italic:false><gray>%xp% fighting XP."
     filler:
       BLACK_STAINED_GLASS_PANE:
         - 27

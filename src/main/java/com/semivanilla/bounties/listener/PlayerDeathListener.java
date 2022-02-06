@@ -71,13 +71,13 @@ public final class PlayerDeathListener implements Listener {
             ,plugin.getConfiguration().getMessagePlayerSpamVictim(),
                     plugin.getConfiguration().getMessageDelay(),
                     new InternalPlaceholders("%dead_player%",deadName),
-                    new InternalPlaceholders("%killer%",killer.getName()));
+                    new InternalPlaceholders("%bounty%",killer.getName()));
 
             plugin.getUtilityManager().getMessagingUtils().sendInInterval(killer
                     ,plugin.getConfiguration().getMessagePlayerSpamKiller(),
                     plugin.getConfiguration().getMessageDelay(),
                     new InternalPlaceholders("%dead_player%",deadName),
-                    new InternalPlaceholders("%killer%",killer.getName()));
+                    new InternalPlaceholders("%bounty%",killer.getName()));
 
             plugin.getDataManager().getPlayerTrackerManager().updateKillForDuplicatedKill(killerUID);
             plugin.getDataManager().getStatisticsManager().addKillForPlayer(killerUID);

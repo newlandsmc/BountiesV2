@@ -79,6 +79,7 @@ public class CommandHandler {
                 new BountyCommand(this),
                 new BountyAdminCommand(this)
         );
+        manager.hideTabComplete(true);
     }
 
     public Bounties getPlugin() {
