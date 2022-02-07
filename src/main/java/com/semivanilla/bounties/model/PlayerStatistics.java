@@ -64,6 +64,9 @@ public final class PlayerStatistics {
     }
 
     public float getKDRatio(){
-        return (float) (bountyKills + kills) /(float) deaths;
+        final float value = (float) (bountyKills + kills) /(float) deaths;
+        if(Float.isInfinite(value) && Float.isNaN(value))
+            return (float) 0.0;
+        return value;
     }
 }

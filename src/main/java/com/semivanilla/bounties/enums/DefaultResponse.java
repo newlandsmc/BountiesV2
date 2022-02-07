@@ -21,13 +21,17 @@ public enum DefaultResponse {
     PLUGIN_RELOADED(MessageFormatter.transform("<green>Plugin has been reloaded!")),
 
     UNKNOWN_PLAYER_ON_STATS(MessageFormatter.transform("<red>Failed to set stats on player. Seems like data is missing")),
+    UNABLE_TO_FETCH_STAT(MessageFormatter.transform("<red>Failed to fetch stat of the player!")),
     SET_STATS_OF_BKILLS(MessageFormatter.transform("<green>You have successfully set the bounty kills on the player")),
     SET_STATS_OF_KILLS(MessageFormatter.transform("<green>You have successfully set the kills on the player")),
     SET_STATS_OF_DEATH(MessageFormatter.transform("<green>You have successfully set the deaths on the player")),
     STATS_RESET(MessageFormatter.transform("<green>You have successfully reset-ed the player statistics data for the player")),
 
     STATUS_EXEMPTED(MessageFormatter.transform("<green>The player is exempted from the bounty")),
-    STATUS_NOT_EXEMPTED(MessageFormatter.transform("<green>The player is not exempted from the bounty"))
+    STATUS_NOT_EXEMPTED(MessageFormatter.transform("<green>The player is not exempted from the bounty")),
+
+    PLAYER_NOT_A_TRACKER(MessageFormatter.transform("<red>The player does not have an active tracker!")),
+    REMOVED_TRACKER_ON(MessageFormatter.transform("<green>Successfully removed tracker on player"))
     ;
 
     private final Component response;

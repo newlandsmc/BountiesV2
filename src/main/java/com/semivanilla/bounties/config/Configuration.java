@@ -3,6 +3,7 @@ package com.semivanilla.bounties.config;
 import com.semivanilla.bounties.Bounties;
 import com.semivanilla.bounties.gui.core.buttons.Buttons;
 import com.semivanilla.bounties.gui.core.buttons.Fillers;
+import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
 import com.semivanilla.bounties.utils.modules.ItemUtils;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,11 +29,12 @@ public final class Configuration {
     private final TreeSet<Integer> bountyKillRandomLocMap = new TreeSet<>();
 
     private String formattedPlaceholderBountyTag,formattedPlaceholderZeroOnline,formattedPlaceholderPlayersOnline;
+    private String wrongCommandHelpMessage;
 
     private int messageDelay;
     private List<String> messageBroadcastNewBounty, messageBroadcastBountyGrows,messageBroadcastBountyClaimed,messagePlayerSpamKiller,messagePlayerSpamVictim;
 
-    private List<String> messageHelpHeader,messageHelpFooter;
+    private List<String> messageHelpHeader,messageHelpFooter,messagePlayerStats;
     private String messageHelpContent;
 
     private boolean showNextAndPreOnlyNeeded;
@@ -93,6 +95,8 @@ public final class Configuration {
         this.messageHelpHeader = this.configuration.getStringList("messages.help-message.header");
         this.messageHelpContent = this.configuration.getString("messages.help-message.command-description");
         this.messageHelpFooter = this.configuration.getStringList("messages.help-message.footer");
+        this.wrongCommandHelpMessage = this.configuration.getString("messages.wrong-command");
+        this.messagePlayerStats = this.configuration.getStringList("messages.player-stats");
 
         this.showNextAndPreOnlyNeeded = this.configuration.getBoolean("gui.bounty-menu.show-next-and-pre-if-only-needed");
         this.bountyMenuName = this.configuration.getString("gui.bounty-menu.name");
@@ -238,4 +242,18 @@ public final class Configuration {
     public Buttons getBountyMenuStatsButton() {
         return bountyMenuStatsButton;
     }
+
+    public String getWrongCommandHelpMessage() {
+        return wrongCommandHelpMessage;
+    }
+
+    public List<String> getMessagePlayerStats(InternalPlaceholders... placeholders) {
+        List<String> returnMessageToStat = this.messagePlayerStats;
+        for(InternalPlaceholders pl : placeholders){
+            returnMessageToStat = pl.replacePlaceholders(returnMessageToStat);
+        }
+        return returnMessageToStat;
+    }
+
+
 }

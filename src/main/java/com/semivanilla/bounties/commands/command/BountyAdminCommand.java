@@ -2,11 +2,14 @@ package com.semivanilla.bounties.commands.command;
 
 import com.semivanilla.bounties.commands.CommandHandler;
 import com.semivanilla.bounties.enums.DefaultResponse;
+import com.semivanilla.bounties.model.PlayerStatistics;
+import com.semivanilla.bounties.utils.modules.InternalPlaceholders;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import me.mattstudios.mf.annotations.*;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -67,6 +70,7 @@ public class BountyAdminCommand extends CommandBase {
         }
 
         handler.getPlugin().getDataManager().getBountyManager().clearBountyOn(player.getUniqueId());
+        handler.getPlugin().getDataManager().getPlayerTrackerManager().removeTrackerOn(player.getUniqueId());
         handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_REMOVED_BOUNTY.getResponse());
     }
 
@@ -108,7 +112,7 @@ public class BountyAdminCommand extends CommandBase {
         handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.PLUGIN_RELOADED.getResponse());
     }
 
-    @SubCommand("set")
+    @SubCommand("setkills")
     @Permission("bounty.command.set")
     @Completion({"#players","#range"})
     public void onCommandSet(final CommandSender sender, final Player player, final Integer kills){
@@ -131,7 +135,7 @@ public class BountyAdminCommand extends CommandBase {
         handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.SUCCESSFULLY_SET_KILLS.getResponse());
     }
 
-    @SubCommand("stats")
+    @SubCommand("setstats")
     @Permission("bounty.command.stats")
     @Completion({"#players","#stat","#range"})
     public void onCommandStats(final CommandSender sender, final Player player, String stats, @Optional Integer value){
@@ -205,6 +209,50 @@ public class BountyAdminCommand extends CommandBase {
                 break;
             default:
         }
+    }
+
+    @SubCommand("cleartracker")
+    @Permission("bounty.command.cleartracker")
+    @Completion({"#players"})
+    public void onClearCommand(@NotNull final CommandSender sender, final Player player){
+        if(player == null){
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.INVALID_PLAYER_ARGS.getResponse());
+            return;
+        }
+
+        if(!handler.getPlugin().getDataManager().getPlayerTrackerManager().getKilledTrackerMap().containsKey(player.getUniqueId())){
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.PLAYER_NOT_A_TRACKER.getResponse());
+            return;
+        }
+
+        handler.getPlugin().getDataManager().getPlayerTrackerManager().removeTrackerOn(player.getUniqueId());
+        handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.REMOVED_TRACKER_ON.getResponse());
+    }
+
+    @SubCommand("stat")
+    @Permission("bounty.command.stat")
+    @Completion({"#players"})
+    public void onCommandStat(@NotNull final CommandSender sender, final Player player){
+        if(player == null){
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender, DefaultResponse.INVALID_PLAYER_ARGS.getResponse());
+            return;
+        }
+
+        PlayerStatistics statistics = handler.getPlugin().getDataManager().getStatisticsManager().getPlayerStatistics(player);
+        if(statistics == null){
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,DefaultResponse.UNABLE_TO_FETCH_STAT.getResponse());
+            return;
+        }
+
+        handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,
+            handler.getPlugin().getConfiguration().getMessagePlayerStats(
+                    new InternalPlaceholders("%kd%",statistics.getKDRatio()),
+                    new InternalPlaceholders("%deaths%",statistics.getDeaths()),
+                    new InternalPlaceholders("%bkills%",statistics.getBountyKills()),
+                    new InternalPlaceholders("%non_bkills%",statistics.getKills()),
+                    new InternalPlaceholders("%name%",player.getName())
+            )
+        );
     }
 
 

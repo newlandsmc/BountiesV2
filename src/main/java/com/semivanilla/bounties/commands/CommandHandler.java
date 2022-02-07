@@ -25,12 +25,14 @@ public class CommandHandler {
         put("/bountyadmin create [player] [mins]","Creates a bounty on the specified player with the specified time limit");
         put("/bountyadmin remove [player]","Removes the bounty of a player if the player is a bounty.");
         put("/bountyadmin bypass [player] true","Adds the player on to the player exempt list");
+        put("/bountyadmin cleartracker [player]","Clears the last-killed-tracker active on player");
         put("/bountyadmin bypass [player] false","Removes the player on to the player exempt list");
-        put("/bountyadmin set [player] [kills]","Sets the amount of kills a bounty-ed player have");
-        put("/bountyadmin stats [player] bkill [kill]","Set the stats of no of bounties the player killed with the specified value");
-        put("/bountyadmin stats [player] kill [kill]","Set the stats of no of non-bounties the player killed with the specified value");
-        put("/bountyadmin stats [player] death [death]","Set the stats of no of player-caused death of the player with the specified value");
-        put("/bountyadmin stats [player] reset","Reset all the stats of the player to 0");
+        put("/bountyadmin stat [player]","Shows the stats of the player.");
+        put("/bountyadmin setkills [player] [kills]","Sets the amount of kills a bounty-ed player have");
+        put("/bountyadmin setstats [player] bkill [kill]","Set the stats of no of bounties the player killed with the specified value");
+        put("/bountyadmin setstats [player] kill [kill]","Set the stats of no of non-bounties the player killed with the specified value");
+        put("/bountyadmin setstats [player] death [death]","Set the stats of no of player-caused death of the player with the specified value");
+        put("/bountyadmin setstats [player] reset","Reset all the stats of the player to 0");
         put("/bountyadmin reload","Reloads the plugin");
     }};
 
@@ -72,6 +74,18 @@ public class CommandHandler {
                 return statTabCompleter;
             }
         });
+
+        manager.getMessageHandler().register("cmd.no.exists", sender -> {
+            plugin.getUtilityManager().getMessagingUtils().sendTo(sender,plugin.getConfiguration().getWrongCommandHelpMessage());
+        });
+        manager.getMessageHandler().register("cmd.wrong.usage", sender -> {
+            plugin.getUtilityManager().getMessagingUtils().sendTo(sender,plugin.getConfiguration().getWrongCommandHelpMessage());
+        });
+        manager.getMessageHandler().register("cmd.no.permission", sender -> {
+            plugin.getUtilityManager().getMessagingUtils().sendTo(sender,plugin.getConfiguration().getWrongCommandHelpMessage());
+        });
+        manager.hideTabComplete(true);
+
     }
 
     public void registerCommands(){
@@ -79,7 +93,6 @@ public class CommandHandler {
                 new BountyCommand(this),
                 new BountyAdminCommand(this)
         );
-        manager.hideTabComplete(true);
     }
 
     public Bounties getPlugin() {

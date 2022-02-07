@@ -137,3 +137,11 @@ messages:
       - "<gray> * You killed %dead_player% again!"
     victim:
       - "<gray> * %bounty% killed you again!"
+  wrong-command: "<red>Wrong usage! Use /bountyadmin help."
+  player-stats:
+    - "<yellow><strikethrough>                     <reset> %name%'s Bounty Stats <yellow><strikethrough>                     <reset>"
+    - "<yellow>Bounty Kills: <gray>%bkills%"
+    - "<yellow>Non Bounty Kills: <gray>%non_bkills%"
+    - "<yellow>Deaths: <gray>%deaths%"
+    - "<yellow>KD Ratio: <gray>%kd%"
+    - "<yellow><strikethrough>                                                                  <reset>"

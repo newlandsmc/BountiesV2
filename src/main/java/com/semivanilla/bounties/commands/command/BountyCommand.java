@@ -2,6 +2,7 @@ package com.semivanilla.bounties.commands.command;
 
 import com.semivanilla.bounties.commands.CommandHandler;
 import com.semivanilla.bounties.enums.DefaultResponse;
+import me.mattstudios.mf.annotations.Alias;
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Default;
 import me.mattstudios.mf.annotations.SubCommand;
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @Command("bounty")
+@Alias("bounties")
 public class BountyCommand extends CommandBase {
 
     private final CommandHandler handler;
@@ -20,11 +22,6 @@ public class BountyCommand extends CommandBase {
 
     @Default
     public void onDefaultCommand(final Player player){
-        if(handler.getPlugin().getDataManager().getOnlineBountyNames().isEmpty()){
-            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(player, DefaultResponse.NO_ACTIVE_BOUNTIES.getResponse());
-            return;
-        }
-
         handler.getPlugin().getGuiHandler().getBountyMenu().openMenu(player);
     }
 

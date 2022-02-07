@@ -76,7 +76,7 @@ public final class MessageFormatter {
     public static Component transform(String message, InternalPlaceholders... placeholders){
         String messageToTransform = message;
         for (InternalPlaceholders pl : placeholders){
-            messageToTransform = pl.replacePlaceholders(message);
+            messageToTransform = pl.replacePlaceholders(messageToTransform);
         }
         return transform(messageToTransform);
     }
