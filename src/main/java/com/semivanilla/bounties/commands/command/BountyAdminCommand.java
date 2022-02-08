@@ -113,7 +113,7 @@ public class BountyAdminCommand extends CommandBase {
     }
 
     @SubCommand("setkills")
-    @Permission("bounty.command.set")
+    @Permission("bounty.command.setkills")
     @Completion({"#players","#range"})
     public void onCommandSet(final CommandSender sender, final Player player, final Integer kills){
         if(kills == null || kills < 1){
@@ -136,7 +136,7 @@ public class BountyAdminCommand extends CommandBase {
     }
 
     @SubCommand("setstats")
-    @Permission("bounty.command.stats")
+    @Permission("bounty.command.setstats")
     @Completion({"#players","#stat","#range"})
     public void onCommandStats(final CommandSender sender, final Player player, String stats, @Optional Integer value){
         if(stats == null){
@@ -211,8 +211,8 @@ public class BountyAdminCommand extends CommandBase {
         }
     }
 
-    @SubCommand("cleartracker")
-    @Permission("bounty.command.cleartracker")
+    @SubCommand("clearlastkill")
+    @Permission("bounty.command.clearlastkill")
     @Completion({"#players"})
     public void onClearCommand(@NotNull final CommandSender sender, final Player player){
         if(player == null){
@@ -254,6 +254,16 @@ public class BountyAdminCommand extends CommandBase {
             )
         );
     }
-
+    /**
+    //@SubCommand("help")
+    //@Permission("bounty.admin")
+    public void onBountyAdminHelp(@NotNull final CommandSender sender){
+        handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,handler.getPlugin().getConfiguration().getMessageHelpHeader());
+        CommandHandler.adminHelpMap.forEach((command,descr) -> {
+            handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,handler.getPlugin().getConfiguration().getMessageHelpContent(command,descr));
+        });
+        handler.getPlugin().getUtilityManager().getMessagingUtils().sendTo(sender,handler.getPlugin().getConfiguration().getMessageHelpFooter());
+    }
+    **/
 
 }

@@ -50,7 +50,7 @@ public class CommandHandler {
 
     public CommandHandler(Bounties plugin) {
         this.plugin = plugin;
-        this.manager = new CommandManager(plugin);
+        this.manager = new CommandManager(plugin,true);
     }
 
     public void registerOthers(){
