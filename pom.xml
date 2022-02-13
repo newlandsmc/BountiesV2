@@ -156,4 +156,11 @@
             <url>https://repository.apache.org/content/repositories/snapshots/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>repo-alenalex-releases</id>
+            <url>https://repo.alenalex.me/releases</url>
+        </repository>
+    </distributionManagement>
 </project>
