@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.semivanilla.bounties.utils.modules.MessageFormatter;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.GuiItem;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class Fillers{
     }
 
     public GuiItem getAsGUIItem(){
-        return ItemBuilder.from(this.material).name(MessageFormatter.transform("<reset>")).asGuiItem();
+        return ItemBuilder.from(this.material).name(Component.empty()).asGuiItem();
     }
 
     public static Fillers buildFrom(@NotNull ItemStack stack, List<String> slotNo){
