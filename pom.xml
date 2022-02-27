@@ -50,6 +50,10 @@
                                     <pattern>me.mattstudios.mf</pattern>
                                     <shadedPattern>com.semivanilla.bounties.shaded.commands</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>io.github.alen_alex.messageframework.shading.adventure</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
