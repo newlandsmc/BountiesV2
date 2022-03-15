@@ -19,7 +19,7 @@ public final class MessageFormatter {
         messageFormatter  = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.color())
-                        .resolver(StandardTags.decoration())
+                        .resolver(StandardTags.decorations())
                         .resolver(StandardTags.hoverEvent())
                         .resolver(StandardTags.clickEvent())
                         .resolver(StandardTags.keybind())
@@ -29,6 +29,7 @@ public final class MessageFormatter {
                         .resolver(StandardTags.font())
                         .resolver(StandardTags.gradient())
                         .resolver(StandardTags.rainbow())
+                        .resolver(StandardTags.reset())
                         .build())
                 .strict(false)
                 .build();

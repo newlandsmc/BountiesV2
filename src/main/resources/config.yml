@@ -75,7 +75,7 @@ gui:
         lore:
           - "<italic:false><white>Time left <gray>» <yellow>%time-left%"
           - "<italic:false><white>Current Kills <gray>» <yellow>%kills%"
-          - "<italic:false><reset>"
+          - "<italic:false>"
           - "<italic:false><gray>Killing this bounty is worth"
           - "<italic:false><gray>%xp% fighting XP."
     filler:
