@@ -49,7 +49,7 @@ public final class PlayerDeathListener implements Listener {
         if(event.getEntity().getKiller() == null)
             return;
 
-        if(event.getEntity().getKiller().getName().equals(event.getEntity().getName()))
+        if(event.getEntity().getKiller().getUniqueId().equals(event.getEntity().getUniqueId()))
             return;
 
         final Player killer = event.getEntity().getKiller();
