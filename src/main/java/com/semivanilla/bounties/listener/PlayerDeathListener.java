@@ -49,6 +49,9 @@ public final class PlayerDeathListener implements Listener {
         if(event.getEntity().getKiller() == null)
             return;
 
+        if(event.getEntity().getKiller().getName().equals(event.getEntity().getName()))
+            return;
+
         final Player killer = event.getEntity().getKiller();
         final UUID killerUID = event.getEntity().getKiller().getUniqueId();
 
