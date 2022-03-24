@@ -55,6 +55,9 @@ public final class MessagingUtils {
             manager.getPlugin().getServer().getScheduler().runTaskLater(manager.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
+                    if(player == null)
+                        return;
+
                     sendTo(player,m,placeholders);
                 }
             },interval);
